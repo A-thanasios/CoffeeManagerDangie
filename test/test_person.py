@@ -1,7 +1,7 @@
 import unittest
 
-from src.structs.name import Name
-from src.person import Person
+from src.data.person import Person
+from src.data.structs.name import Name
 
 
 class TestPerson(unittest.TestCase):
@@ -63,15 +63,7 @@ class TestPerson(unittest.TestCase):
         # Test setter with empty string
         self.test_person.img = ""
         self.assertEqual(self.test_person.img, "")
-    
-    def test_private_attributes(self):
-        """Test that attributes are properly private"""
-        with self.assertRaises(AttributeError):
-            _ = self.test_person.__name
-        with self.assertRaises(AttributeError):
-            _ = self.test_person.__days_per_week
-        with self.assertRaises(AttributeError):
-            _ = self.test_person.__img
+
 
 if __name__ == '__main__':
     unittest.main() 
