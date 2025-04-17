@@ -1,11 +1,20 @@
 class Coffee:
-    def __init__(self, brand_name: str, shop: str, cost: int, img: str=''):
+    def __init__(self, brand_name: str, shop: str, cost: int, img: str='', db_id: int = None):
+        self.__id = db_id
         self.__brand_name = brand_name
         self.__shop = shop
         self.__cost = cost
         self.__img = img
 
-        
+    @property
+    def id(self):
+        return self.__id
+
+    @id.setter
+    def id(self, value):
+        if not isinstance(value, int) or value < 0:
+            raise ValueError("ID must be a positive integer")
+        self.__id = value
 
     @property
     def brand_name(self):

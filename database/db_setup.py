@@ -1,4 +1,3 @@
-import os
 import sqlite3
 import logging
 
@@ -8,16 +7,10 @@ logger = logging.getLogger(__name__)
 
 def init_db(db_path: str):
     try:
-        os.umask(0)
         with sqlite3.connect(db_path) as conn:
-            logger.info("Connecting to database...")
-            conn.execute('PRAGMA journal_mode=WAL')
             cursor = conn.cursor()
-            # Enable foreign key constraints
             cursor.execute('PRAGMA foreign_keys = ON;')
-            logger.info("Creating tables...")
 
-            # Create tables
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS coffee (
                     id INTEGER PRIMARY KEY,
@@ -27,6 +20,7 @@ def init_db(db_path: str):
                     img TEXT
                 )
             ''')
+
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS person (
                     id INTEGER PRIMARY KEY,
@@ -34,25 +28,42 @@ def init_db(db_path: str):
                     middle_name TEXT,
                     last_name TEXT NOT NULL,
                     days_per_week INTEGER NOT NULL,
-                    is_buying BOOLEAN NOT NULL
+                    is_buying BOOLEAN NOT NULL,
+                    img TEXT
                 )
             ''')
+
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS purchase (
                     id INTEGER PRIMARY KEY,
                     name TEXT NOT NULL,
-                    date DATE NOT NULL,
-                    coffee_id INTEGER,
+                    date DATE NOT NULL
+                )
+            ''')
+
+            # M:N Tables
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS purchase_person (
+                    purchase_id INTEGER,
                     person_id INTEGER,
-                    FOREIGN KEY (coffee_id) REFERENCES coffee (id),
+                    PRIMARY KEY (purchase_id, person_id),
+                    FOREIGN KEY (purchase_id) REFERENCES purchase (id),
                     FOREIGN KEY (person_id) REFERENCES person (id)
                 )
             ''')
 
-            # Commit changes
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS purchase_coffee (
+                    purchase_id INTEGER,
+                    coffee_id INTEGER,
+                    quantity INTEGER NOT NULL DEFAULT 1,
+                    PRIMARY KEY (purchase_id, coffee_id),
+                    FOREIGN KEY (purchase_id) REFERENCES purchase (id),
+                    FOREIGN KEY (coffee_id) REFERENCES coffee (id)
+                )
+            ''')
+
             conn.commit()
-            cursor.close()
-            logger.info("Database initialized successfully.")
     except sqlite3.Error as error:
         logger.error(error)
         raise
