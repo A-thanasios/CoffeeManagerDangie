@@ -13,4 +13,10 @@ ENV/
 
 # OS
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# database
+database/coffee_manager.db
+database/coffee_manager.db-journal
+database/coffee_manager.db-shm
+databasecoffee_manager.db-wal
