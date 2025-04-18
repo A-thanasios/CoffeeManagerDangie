@@ -53,6 +53,12 @@ class Purchase:
     def name(self):
         return self.__name
 
+    @name.setter
+    def name(self, value):
+        if not isinstance(value, str) or not value:
+            raise ValueError("Name must be a non-empty string")
+        self.__name = value
+
     @property
     def persons(self):
         return self.__persons
