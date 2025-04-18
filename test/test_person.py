@@ -8,7 +8,7 @@ class TestPerson(unittest.TestCase):
     def setUp(self):
         """Set up test cases"""
         self.test_name = Name("John", "Doe")
-        self.test_person = Person(self.test_name, 5, "test.jpg")
+        self.test_person = Person(self.test_name, 5, True, "test.jpg")
     
     def test_initialization(self):
         """Test proper initialization"""

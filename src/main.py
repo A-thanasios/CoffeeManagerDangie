@@ -56,6 +56,7 @@ def main():
     purchase.id = insert_purchase(db_path, purchase)
     print(get_purchase_by_id(db_path, purchase.id))
     print(CoffeePaymentCalculator().cost_by_one_person(get_purchase_by_id(db_path, purchase.id), get_coffee_by_id(db_path, purchase.id), person))
+    print(get_purchase_by_id(db_path, purchase.id).cost_by_one_person(person))
 
 if __name__ == "__main__":
     main() 

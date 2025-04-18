@@ -12,6 +12,33 @@ class Purchase:
         self.__coffees = coffees
         self.__date = date
 
+    def cost_by_one_person(self, person: Person):
+        days_sum = self.__total_days_sum(self.persons)
+
+        if days_sum <= 0:
+            raise ValueError('No days sum available')
+
+        return (self.__cost_sum() * person.days_per_week) / days_sum
+
+    def __total_days_sum(self, persons: list[Person]):
+        days_sum = 0
+
+        for person in persons:
+            days_sum += person.days_per_week
+
+        return days_sum
+
+    def __cost_sum(self):
+        if len(self.coffees) == 1:
+            return self.coffees[0].cost
+
+        cost_sum = 0
+
+        for coffee in self.coffees:
+            cost_sum += coffee.cost
+
+        return cost_sum
+
     @property
     def id(self):
         return self.__id
