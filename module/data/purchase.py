@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from src.data.coffee import Coffee
-from src.data.person import Person
+from module.data.coffee import Coffee
+from module.data.person import Person
 
 
 class Purchase:

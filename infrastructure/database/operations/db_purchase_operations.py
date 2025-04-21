@@ -1,9 +1,9 @@
 import sqlite3
 
-from infrastructure.database.SQLite_db_setup import logger
+from infrastructure.database.SQLite_database import logger
 from infrastructure.database.operations.db_coffee_operations import get_coffee_by_id
 from infrastructure.database.operations.db_person_operations import get_person_by_id
-from src.data.purchase import Purchase
+from module.data.purchase import Purchase
 
 
 # This module contains functions to interact with the purchase table in the database.

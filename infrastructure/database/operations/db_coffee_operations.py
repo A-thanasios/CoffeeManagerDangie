@@ -1,7 +1,7 @@
 import sqlite3
 
-from infrastructure.database.SQLite_db_setup import logger
-from src.data.coffee import Coffee
+from infrastructure.database.SQLite_database import logger
+from module.data.coffee import Coffee
 
 
 def insert_coffee(db_path, coffee):

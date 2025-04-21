@@ -1,7 +1,7 @@
 import unittest
 
-from src.data.person import Person
-from src.data.structs.name import Name
+from module.data.person import Person
+from module.data.structs.name import Name
 
 
 class TestPerson(unittest.TestCase):

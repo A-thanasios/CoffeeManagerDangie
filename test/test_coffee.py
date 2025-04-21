@@ -1,5 +1,5 @@
 import unittest
-from src.data.coffee import Coffee
+from module.data.coffee import Coffee
 
 
 class TestCoffee(unittest.TestCase):

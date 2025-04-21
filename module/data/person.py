@@ -1,4 +1,4 @@
-from src.data.structs.name import Name
+from module.data.structs.name import Name
 
 
 class Person:

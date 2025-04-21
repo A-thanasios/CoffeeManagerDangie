@@ -1,10 +1,10 @@
 import unittest
 from datetime import datetime
 
-from src.data.coffee import Coffee
-from src.data.person import Person
-from src.data.purchase import Purchase
-from src.data.structs.name import Name
+from module.data.coffee import Coffee
+from module.data.person import Person
+from module.data.purchase import Purchase
+from module.data.structs.name import Name
 
 
 class TestPurchase(unittest.TestCase):

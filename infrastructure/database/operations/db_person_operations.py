@@ -1,8 +1,8 @@
 import sqlite3
 
-from infrastructure.database.SQLite_db_setup import logger
-from src.data.person import Person
-from src.data.structs.name import Name
+from infrastructure.database.SQLite_database import logger
+from module.data.person import Person
+from module.data.structs.name import Name
 
 
 def insert_person(db_path, person):
