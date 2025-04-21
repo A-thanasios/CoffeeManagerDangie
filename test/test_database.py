@@ -2,10 +2,10 @@ import os
 import sqlite3
 import unittest
 from datetime import datetime
-from database.db_setup import init_db
-from database.operations.db_coffee_operations import insert_coffee, get_coffee_by_id, update_coffee, delete_coffee
-from database.operations.db_person_operations import insert_person, get_person_by_id, update_person, delete_person
-from database.operations.db_purchase_operations import insert_purchase, get_purchase_by_id, update_purchase, \
+from infrastructure.database.SQLite_db_setup import init_db
+from infrastructure.database.operations.db_coffee_operations import insert_coffee, get_coffee_by_id, update_coffee, delete_coffee
+from infrastructure.database.operations.db_person_operations import insert_person, get_person_by_id, update_person, delete_person
+from infrastructure.database.operations.db_purchase_operations import insert_purchase, get_purchase_by_id, update_purchase, \
     delete_purchase
 from src.data.coffee import Coffee
 from src.data.person import Person

@@ -1,6 +1,6 @@
 import sqlite3
 
-from database.db_setup import logger
+from infrastructure.database.SQLite_db_setup import logger
 from src.data.coffee import Coffee
 
 

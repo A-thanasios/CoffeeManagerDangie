@@ -1,8 +1,8 @@
 import sqlite3
 
-from database.db_setup import logger
-from database.operations.db_coffee_operations import get_coffee_by_id
-from database.operations.db_person_operations import get_person_by_id
+from infrastructure.database.SQLite_db_setup import logger
+from infrastructure.database.operations.db_coffee_operations import get_coffee_by_id
+from infrastructure.database.operations.db_person_operations import get_person_by_id
 from src.data.purchase import Purchase
 
 
@@ -76,7 +76,7 @@ def get_purchase_by_id(db_path, purchase_id):
         raise
 
 
-def get_purchases_by_person(db_path, person_id):
+def get_purchases_by_person_id(db_path, person_id):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -153,7 +153,7 @@ def update_purchase(db_path, purchase):
         logger.error(error)
         raise
 
-def delete_purchase(db_path, purchase_id):
+def delete_purchase_by_id(db_path, purchase_id):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()

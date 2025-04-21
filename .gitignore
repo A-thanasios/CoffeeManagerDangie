@@ -16,7 +16,7 @@ ENV/
 Thumbs.db
 
 # database
-database/coffee_manager.db
-database/coffee_manager.db-journal
-database/coffee_manager.db-shm
+infrastructure/database/coffee_manager.db
+infrastructure/database/coffee_manager.db-journal
+infrastructure/database/coffee_manager.db-shm
 databasecoffee_manager.db-wal

@@ -1,11 +1,14 @@
+import os
 import sqlite3
 import logging
+
+db_path = os.path.join('infrastructure/database', 'coffee_manager.db')
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def init_db(db_path: str):
+def init_db():
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -67,3 +70,6 @@ def init_db(db_path: str):
     except sqlite3.Error as error:
         logger.error(error)
         raise
+
+def db_exists():
+    return os.path.exists(db_path)
