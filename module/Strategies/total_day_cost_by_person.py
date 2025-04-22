@@ -24,12 +24,12 @@ class TotalDayCostByPerson(CostStrategy):
 
     @staticmethod
     def __cost_sum(purchase: Purchase):
-        if len(purchase.coffees) == 1:
-            return purchase.coffees[0].cost
+        if len(purchase.products) == 1:
+            return purchase.products[0].cost
 
         cost_sum = 0
 
-        for coffee in purchase.coffees:
-            cost_sum += coffee.cost
+        for product in purchase.products:
+            cost_sum += product.cost
 
         return cost_sum

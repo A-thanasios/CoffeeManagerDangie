@@ -16,10 +16,10 @@ ENV/
 Thumbs.db
 
 # database
-infrastructure/database/coffee_manager.db
-infrastructure/database/coffee_manager.db-journal
-infrastructure/database/coffee_manager.db-shm
-databasecoffee_manager.db-wal
+infrastructure/database/product_manager.db
+infrastructure/database/product_manager.db-journal
+infrastructure/database/product_manager.db-shm
+databaseproduct_manager.db-wal
 
 # docs
 /docs

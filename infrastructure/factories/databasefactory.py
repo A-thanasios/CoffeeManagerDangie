@@ -6,6 +6,8 @@ class DatabaseFactory:
     @staticmethod
     def create_database():
         if db_type == 'sqlite':
-            return SQLiteDatabase(db_path)
+            db = SQLiteDatabase(db_path)
+            db.init_db()
+            return db
         else:
             raise ValueError(f"Unsupported database type: {db_type}")

@@ -1,7 +1,7 @@
 import sqlite3
 
 from infrastructure.database.SQLite_database import logger
-from infrastructure.database.operations.db_coffee_operations import get_coffee_by_id
+from infrastructure.database.operations.db_product_operations import get_product_by_id
 from infrastructure.database.operations.db_person_operations import get_person_by_id
 from module.data.purchase import Purchase
 
@@ -28,12 +28,12 @@ def insert_purchase(db_path, purchase):
                     VALUES (?, ?)
                 ''', (purchase_id, person.id))
 
-            # Insert relationships with coffees
-            for coffee in purchase.coffees:
+            # Insert relationships with products
+            for product in purchase.products:
                 cursor.execute('''
-                    INSERT INTO purchase_coffee (purchase_id, coffee_id)
+                    INSERT INTO purchase_product (purchase_id, product_id)
                     VALUES (?, ?)
-                ''', (purchase_id, coffee.id))
+                ''', (purchase_id, product.id))
 
             conn.commit()
             return purchase_id
@@ -64,13 +64,13 @@ def get_purchase_by_id(db_path, purchase_id):
             ''', (purchase_id,))
             persons = [get_person_by_id(db_path, row[0]) for row in cursor.fetchall()]
 
-            # get coffees
+            # get products
             cursor.execute('''
-                SELECT coffee_id FROM purchase_coffee WHERE purchase_id = ?
+                SELECT product_id FROM purchase_product WHERE purchase_id = ?
             ''', (purchase_id,))
-            coffees = [get_coffee_by_id(db_path, row[0]) for row in cursor.fetchall()]
+            products = [get_product_by_id(db_path, row[0]) for row in cursor.fetchall()]
 
-            return Purchase(purchase_row[1], persons, coffees, purchase_row[2], purchase_row[0])
+            return Purchase(purchase_row[1], persons, products, purchase_row[2], purchase_row[0])
     except sqlite3.Error as error:
         logger.error(error)
         raise
@@ -81,15 +81,15 @@ def get_purchases_by_person_id(db_path, person_id):
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT id, name, date, coffee_id
+                SELECT id, name, date, product_id
                 FROM purchase WHERE person_id = ?
             ''', (person_id,))
             rows = cursor.fetchall()
             purchases = []
             for row in rows:
-                coffee = get_coffee_by_id(db_path, row[3])
+                product = get_product_by_id(db_path, row[3])
                 person = get_person_by_id(db_path, person_id)
-                purchases.append(Purchase(row[1], [person], coffee, row[2]))
+                purchases.append(Purchase(row[1], [person], product, row[2]))
             return purchases
     except sqlite3.Error as error:
         logger.error(error)
@@ -132,7 +132,7 @@ def update_purchase(db_path, purchase):
 
             # Clear existing relationships
             cursor.execute('DELETE FROM purchase_person WHERE purchase_id = ?', (purchase.id,))
-            cursor.execute('DELETE FROM purchase_coffee WHERE purchase_id = ?', (purchase.id,))
+            cursor.execute('DELETE FROM purchase_product WHERE purchase_id = ?', (purchase.id,))
 
             # Insert updated person relationships
             for person in purchase.persons:
@@ -141,12 +141,12 @@ def update_purchase(db_path, purchase):
                     VALUES (?, ?)
                 ''', (purchase.id, person.id))
 
-            # Insert updated coffee relationships
-            for coffee in purchase.coffees:
+            # Insert updated product relationships
+            for product in purchase.products:
                 cursor.execute('''
-                    INSERT INTO purchase_coffee (purchase_id, coffee_id)
+                    INSERT INTO purchase_product (purchase_id, product_id)
                     VALUES (?, ?)
-                ''', (purchase.id, coffee.id))
+                ''', (purchase.id, product.id))
 
             conn.commit()
     except sqlite3.Error as error:

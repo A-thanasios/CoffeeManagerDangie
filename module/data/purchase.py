@@ -1,15 +1,15 @@
 from datetime import datetime
 
-from module.data.coffee import Coffee
+from module.data.product import Product
 from module.data.person import Person
 
 
 class Purchase:
-    def __init__(self, name: str, persons: list[Person], coffees: list[Coffee], date: datetime, db_id: int = None):
+    def __init__(self, name: str, persons: list[Person], products: list[Product], date: datetime, db_id: int = None):
         self.__id = db_id
         self.__name = name
         self.__persons = persons
-        self.__coffees = coffees
+        self.__products = products
         self.__date = date
 
 
@@ -38,8 +38,8 @@ class Purchase:
         return self.__persons
 
     @property
-    def coffees(self):
-        return self.__coffees
+    def products(self):
+        return self.__products
 
     @property
     def date(self):
@@ -53,5 +53,5 @@ class Purchase:
         return (f"Purchase(id={self.__id}, "
                 f"name={self.__name}, "
                 f"persons={list(person.__str__() for person in self.__persons)}, "
-                f"coffees={list(coffee.__str__() for coffee in self.__coffees)}, "
+                f"products={list(product.__str__() for product in self.__products)}, "
                 f"date={self.__date})")

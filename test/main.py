@@ -2,11 +2,11 @@ import os.path
 from datetime import datetime
 
 from infrastructure.factories.databasefactory import DatabaseFactory
-from infrastructure.repositories.SQLite_coffee_repository import SQLiteCoffeeRepository
+from infrastructure.repositories.SQLite_product_repository import SQLiteProductRepository
 from infrastructure.repositories.SQLite_person_repository import SQLitePersonRepository
 from infrastructure.repositories.SQLite_purchase_repository import SQLitePurchaseRepository
 from module.Strategies.total_day_cost_by_person import TotalDayCostByPerson
-from module.data.coffee import Coffee
+from module.data.product import Product
 from module.data.person import Person
 from module.data.purchase import Purchase
 from module.data.structs.name import Name
@@ -28,14 +28,14 @@ def main():
         'https://example.com/image.jpg'
     )
 
-    coffee = Coffee('Costa',
-                    'Costa Coffee',
-                    250,
-                    'https://example.com/coffee.jpg')
+    product = Product('Costa',
+                    'Costa product',
+                     250,
+                    'https://example.com/product.jpg')
 
     purchase = Purchase(r'Costa/April/2023',
                         [person, person1],
-                        [coffee],
+                        [product],
                         datetime.now())
 
     db = DatabaseFactory.create_database()
@@ -45,20 +45,20 @@ def main():
 
     purchase_repo = SQLitePurchaseRepository(db.path)
     person_repo = SQLitePersonRepository(db.path)
-    coffee_repo = SQLiteCoffeeRepository(db.path)
+    product_repo = SQLiteProductRepository(db.path)
     cost_by_person = TotalDayCostByPerson()
 
     person_id = person_repo.add(person)
 
     person1_id = person_repo.add(person1)
 
-    coffee_id = coffee_repo.add(coffee)
+    product_id = product_repo.add(product)
 
     purchase_id = purchase_repo.add(purchase)
 
     print(purchase_repo.get_by_id(purchase_id))
     print(person_repo.get_by_id(person_id))
-    print(coffee_repo.get_all)
+    print(product_repo.get_all)
 
     for purchase in purchase_repo.get_all():
         print(purchase)

@@ -1,4 +1,4 @@
-class Coffee:
+class Product:
     def __init__(self, brand_name: str, shop: str, cost: int, img: str='', db_id: int = None):
         self.__id = db_id
         self.__brand_name = brand_name
