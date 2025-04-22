@@ -1,4 +1,4 @@
-from infrastructure.repository.repository import Repository
+from module.interfaces.repository import Repository
 
 from infrastructure.database.operations.db_person_operations import (
     insert_person,

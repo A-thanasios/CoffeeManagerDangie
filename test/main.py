@@ -1,10 +1,11 @@
 import os.path
 from datetime import datetime
 
-from infrastructure.factory.databasefactory import DatabaseFactory
-from infrastructure.repository.SQLite_coffee_repository import SQLiteCoffeeRepository
-from infrastructure.repository.SQLite_person_repository import SQLitePersonRepository
-from infrastructure.repository.SQLite_purchase_repository import SQLitePurchaseRepository
+from infrastructure.factories.databasefactory import DatabaseFactory
+from infrastructure.repositories.SQLite_coffee_repository import SQLiteCoffeeRepository
+from infrastructure.repositories.SQLite_person_repository import SQLitePersonRepository
+from infrastructure.repositories.SQLite_purchase_repository import SQLitePurchaseRepository
+from module.Strategies.total_day_cost_by_person import TotalDayCostByPerson
 from module.data.coffee import Coffee
 from module.data.person import Person
 from module.data.purchase import Purchase
@@ -45,6 +46,7 @@ def main():
     purchase_repo = SQLitePurchaseRepository(db.path)
     person_repo = SQLitePersonRepository(db.path)
     coffee_repo = SQLiteCoffeeRepository(db.path)
+    cost_by_person = TotalDayCostByPerson()
 
     person_id = person_repo.add(person)
 
@@ -60,6 +62,8 @@ def main():
 
     for purchase in purchase_repo.get_all():
         print(purchase)
+
+    print(cost_by_person.calculate(purchase, person))
 
 if __name__ == "__main__":
     main() 
