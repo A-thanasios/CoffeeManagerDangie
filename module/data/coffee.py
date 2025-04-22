@@ -49,4 +49,7 @@ class Coffee:
         if not isinstance(value, (int, float)) or value < 0:
             raise ValueError("cost must be a positive number")
         self.__cost = value
+
+    def __str__(self):
+        return f"{self.__brand_name} from {self.__shop}, cost= {self.__cost}"
         

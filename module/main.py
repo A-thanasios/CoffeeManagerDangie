@@ -2,6 +2,8 @@ import os.path
 from datetime import datetime
 
 from infrastructure.factory.databasefactory import DatabaseFactory
+from infrastructure.repository.SQLite_coffee_repository import SQLiteCoffeeRepository
+from infrastructure.repository.SQLite_person_repository import SQLitePersonRepository
 from infrastructure.repository.SQLite_purchase_repository import SQLitePurchaseRepository
 from module.data.coffee import Coffee
 from module.data.person import Person
@@ -40,10 +42,24 @@ def main():
     if not db.exists():
         db.init_db()
 
-    purchase_repository = SQLitePurchaseRepository(db.path)
+    purchase_repo = SQLitePurchaseRepository(db.path)
+    person_repo = SQLitePersonRepository(db.path)
+    coffee_repo = SQLiteCoffeeRepository(db.path)
 
-    purchase_id = purchase_repository.add(purchase)
-    print(purchase_repository.get_by_id(purchase_id))
+    person_id = person_repo.add(person)
+
+    person1_id = person_repo.add(person1)
+
+    coffee_id = coffee_repo.add(coffee)
+
+    purchase_id = purchase_repo.add(purchase)
+
+    print(purchase_repo.get_by_id(purchase_id))
+    print(person_repo.get_by_id(person_id))
+    print(coffee_repo.get_all)
+
+    for purchase in purchase_repo.get_all():
+        print(purchase)
 
 if __name__ == "__main__":
     main() 

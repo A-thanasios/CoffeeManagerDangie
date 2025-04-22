@@ -76,4 +76,8 @@ class Purchase:
         self.__date = value
 
     def __str__(self):
-        return f"Purchase(id={self.__id}, name={self.__name}, persons={self.__persons}, coffees={self.__coffees}, date={self.__date})"
+        return (f"Purchase(id={self.__id}, "
+                f"name={self.__name}, "
+                f"persons={list(person.__str__() for person in self.__persons)}, "
+                f"coffees={list(coffee.__str__() for coffee in self.__coffees)}, "
+                f"date={self.__date})")

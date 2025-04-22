@@ -16,6 +16,7 @@ def insert_person(db_path, person):
                   person.days_per_week, person.is_buying, person.img))
 
             new_id = cursor.lastrowid
+            person.id = new_id
             conn.commit()
             cursor.close()
             return new_id
@@ -36,6 +37,26 @@ def get_person_by_id(db_path, person_id):
                 name = Name(row[1], row[2], row[3])
                 return Person(name, row[4], row[5], row[6], row[0])
             return None
+    except sqlite3.Error as error:
+        logger.error(error)
+        raise
+
+def get_persons_by_purchase_id(db_path, purchase_id):
+    try:
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT p.id, p.first_name, p.middle_name, p.last_name, p.days_per_week, p.is_buying, p.img 
+                FROM person AS p
+                JOIN purchase_person AS pp ON p.id = pp.person_id
+                WHERE pp.purchase_id = ?
+            ''', (purchase_id,))
+            rows = cursor.fetchall()
+            persons = []
+            for row in rows:
+                name = Name(row[1], row[2], row[3])
+                persons.append(Person(name, row[4], row[5], row[6], row[0]))
+            return persons
     except sqlite3.Error as error:
         logger.error(error)
         raise
@@ -77,7 +98,7 @@ def update_person(db_path, person):
         logger.error(error)
         raise
 
-def delete_person(db_path, person_id):
+def delete_person_by_id(db_path, person_id):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -88,3 +109,5 @@ def delete_person(db_path, person_id):
     except sqlite3.Error as error:
         logger.error(error)
         raise
+
+
