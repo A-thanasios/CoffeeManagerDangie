@@ -2,7 +2,7 @@ import unittest
 from module.data.product import Product
 
 
-class Testproduct(unittest.TestCase):
+class TestProduct(unittest.TestCase):
     def test_allows_valid_brand_name(self):
         product = Product("Starbucks", "Main Street", 5)
         product.brand_name = "Dunkin"
@@ -41,6 +41,16 @@ class Testproduct(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             product.cost = "free"
         self.assertIn("cost must be a positive number", str(context.exception))
+
+    def test_allows_valid_img(self):
+        product = Product("Starbucks", "Main Street", 5, "image.jpg")
+        self.assertEqual(product.img, "image.jpg")
+        product.img = "new_image.jpg"
+        self.assertEqual(product.img, "new_image.jpg")
+
+    def test_str_representation(self):
+        product = Product("Starbucks", "Main Street", 5)
+        self.assertEqual(str(product), "Starbucks from Main Street, cost= 5")
 
 
 if __name__ == "__main__":

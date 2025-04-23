@@ -1,6 +1,5 @@
 import sqlite3
 
-from infrastructure.database.SQLite_database import logger
 from module.data.product import Product
 
 
@@ -19,8 +18,7 @@ def insert_product(db_path, product):
             cursor.close()
             return new_id
     except sqlite3.Error as error:
-        logger.error(error)
-        raise
+        raise sqlite3.Error (error)
 
 def get_product_by_id(db_path, product_id):
     try:
@@ -35,8 +33,8 @@ def get_product_by_id(db_path, product_id):
                 return Product(row[1], row[2], row[3], row[4], row[0])
             return None
     except sqlite3.Error as error:
-        logger.error(error)
-        raise
+        raise sqlite3.Error (error)
+
 def get_products_by_person_id(db_path, person_id):
     try:
         with sqlite3.connect(db_path) as conn:
@@ -55,8 +53,7 @@ def get_products_by_person_id(db_path, person_id):
                 products.append(Product(row[1], row[2], row[3], row[4], row[0]))
             return products
     except sqlite3.Error as error:
-        logger.error(error)
-        raise
+        raise sqlite3.Error (error)
 
 def get_all_products(db_path):
     try:
@@ -72,8 +69,7 @@ def get_all_products(db_path):
                 products.append(Product(row[1], row[2], row[3], row[4], row[0]))
             return products
     except sqlite3.Error as error:
-        logger.error(error)
-        raise
+        raise sqlite3.Error (error)
 
 
 def update_product(db_path, product):
@@ -91,8 +87,7 @@ def update_product(db_path, product):
 
             conn.commit()
     except sqlite3.Error as error:
-        logger.error(error)
-        raise
+        raise sqlite3.Error (error)
 
 def delete_product_by_id(db_path, product_id):
     try:
@@ -103,5 +98,4 @@ def delete_product_by_id(db_path, product_id):
             ''', (product_id,))
             conn.commit()
     except sqlite3.Error as error:
-        logger.error(error)
-        raise
+        raise sqlite3.Error (error)

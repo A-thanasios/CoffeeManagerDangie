@@ -1,6 +1,6 @@
 from module.interfaces.repository import Repository
 
-from infrastructure.database.operations.db_purchase_operations import (
+from infrastructure.database.SQlite.operations.SQLite_purchase_operations import (
     insert_purchase,
     get_purchase_by_id,
     get_purchases_by_person_id,

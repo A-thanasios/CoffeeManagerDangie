@@ -5,12 +5,21 @@ from module.interfaces.cost_strategy import CostStrategy
 
 class TotalDayCostByPerson(CostStrategy):
     def calculate(self, purchase: Purchase, person: Person):
+        if person.days_per_week == 0:
+            raise ValueError('Person has no days per week')
+
         days_sum = self.__total_days_sum(purchase.persons)
 
         if days_sum <= 0:
             raise ValueError('No days sum available')
 
         return self.__cost_sum(purchase) * (person.days_per_week / days_sum)
+
+    def calculate_all(self, purchase: Purchase):
+        costs = {}
+        for person in purchase.persons:
+            costs[person] = self.calculate(purchase, person)
+        return costs
 
     @staticmethod
     def __total_days_sum(persons: list[Person]):

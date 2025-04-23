@@ -1,7 +1,7 @@
 import os.path
 from datetime import datetime
 
-from infrastructure.factories.databasefactory import DatabaseFactory
+from infrastructure.factories.database_factory import DatabaseFactory
 from infrastructure.repositories.SQLite_product_repository import SQLiteProductRepository
 from infrastructure.repositories.SQLite_person_repository import SQLitePersonRepository
 from infrastructure.repositories.SQLite_purchase_repository import SQLitePurchaseRepository

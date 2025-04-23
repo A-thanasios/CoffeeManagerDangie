@@ -2,7 +2,16 @@ from module.data.structs.name import Name
 
 
 class Person:
-    def __init__(self, name: Name, days_per_week: int, is_buying :bool= True, img: str='', db_id: int=None):
+    def __init__(self, name: Name, days_per_week: int, is_buying: bool = True, img: str = '', db_id: int = None):
+        if not isinstance(name, Name):
+            raise ValueError("Name must be a valid Name object")
+        if not isinstance(days_per_week, int) or days_per_week < 0 or days_per_week > 5:
+            raise ValueError("days_per_week must be an integer between 0 and 5")
+        if not isinstance(is_buying, bool):
+            raise ValueError("is_buying must be a boolean")
+        if db_id is not None and (not isinstance(db_id, int) or db_id < 0):
+            raise ValueError("ID must be a positive integer or None")
+
         self.__id = db_id
         self.__name = name
         self.__days_per_week = days_per_week

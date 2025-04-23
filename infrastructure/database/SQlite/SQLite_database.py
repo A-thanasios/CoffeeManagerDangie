@@ -4,9 +4,7 @@ import logging
 
 from module.interfaces.database import Database
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
 
 class SQLiteDatabase(Database):
     def __init__(self, path):
@@ -16,11 +14,11 @@ class SQLiteDatabase(Database):
 
     def init_db(self):
         if self.exists():
-            logger.info(f"Database already exists at {self.__path}.")
+            print("Database already exists.")
             return
+    
 
         try:
-            logger.info(f"Creating database at {self.__path}.")
             with sqlite3.connect(self.__path) as conn:
                 cursor = conn.cursor()
                 cursor.execute('PRAGMA foreign_keys = ON;')
@@ -78,11 +76,10 @@ class SQLiteDatabase(Database):
                 ''')
 
                 conn.commit()
-                logger.info(f"Database created at {self.__path}.")
         except sqlite3.Error as error:
-            logger.error(error)
-            db_path = ''
-            raise
+            self.__path = ''
+            raise Exception(f"Error initializing database: {error}")
+
 
     def exists(self):
         return os.path.exists(self.__path)
@@ -90,3 +87,7 @@ class SQLiteDatabase(Database):
     @property
     def path(self):
         return self.__path
+    
+    @property
+    def type(self):
+        return "SQLite"

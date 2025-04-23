@@ -8,3 +8,8 @@ class Database(ABC):
     @abstractmethod
     def exists(self):
         pass
+    
+    @property
+    @abstractmethod
+    def path(self):
+        pass

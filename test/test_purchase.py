@@ -35,22 +35,6 @@ class TestPurchase(unittest.TestCase):
         self.assertIn(self.product1, purchase.products)
         self.assertIn(self.product2, purchase.products)
 
-    def test_cost_by_one_person_single_product(self):
-        purchase = Purchase('single', [self.person1, self.person2], [self.product1], self.date)
-        self.assertEqual(purchase.cost_by_one_person(self.person1), 12)
-        self.assertEqual(purchase.cost_by_one_person(self.person2), 8)
-
-    def test_cost_by_one_person_multiple_products(self):
-        purchase = Purchase('multiple', [self.person1, self.person2], [self.product1, self.product2], self.date)
-        self.assertEqual(purchase.cost_by_one_person(self.person1), 21)
-        self.assertEqual(purchase.cost_by_one_person(self.person2), 14)
-
-    def test_cost_by_one_person_no_days(self):
-        person_no_days = Person(Name("Zero", "Days"), 0)
-        purchase = Purchase('no_days', [person_no_days], [self.product1], self.date)
-        with self.assertRaises(ValueError):
-            purchase.cost_by_one_person(person_no_days)
-
     def test_invalid_id_setter(self):
         purchase = Purchase('test', [self.person1], [self.product1], self.date)
         with self.assertRaises(ValueError):
@@ -65,8 +49,8 @@ class TestPurchase(unittest.TestCase):
         self.assertIn('1', str_repr)
 
     def test_empty_persons_list(self):
-        purchase = Purchase('empty', [], [self.product1], self.date)
-        self.assertEqual(len(purchase.persons), 0)
+        with self.assertRaises(ValueError):
+            Purchase('empty', [], [self.product1], self.date)
 
     def test_empty_products_list(self):
         purchase = Purchase('empty', [self.person1], [], self.date)
