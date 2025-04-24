@@ -13,3 +13,9 @@ class Database(ABC):
     @abstractmethod
     def path(self):
         pass
+
+
+    @property
+    @abstractmethod
+    def type(self):
+        pass

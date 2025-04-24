@@ -4,7 +4,7 @@ from module.data.product import Product
 from module.data.person import Person
 from module.data.purchase import Purchase
 from module.data.structs.name import Name
-from module.Strategies.total_day_cost_by_person import TotalDayCostByPerson
+from module.strategies.total_day_cost_by_person import TotalDayCostByPerson
 
 
 class TestTotalDayCostByPerson(unittest.TestCase):
