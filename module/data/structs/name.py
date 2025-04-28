@@ -46,6 +46,11 @@ class Name:
         if self.__middle_name:
             return f"{self.__first_name} {self.__middle_name} {self.__last_name}"
         return f"{self.__first_name} {self.__last_name}"
+
+    def __eq__(self, other):
+        if not isinstance(other, Name):
+            return False
+        return self.full_name == other.full_name
     
     def __str__(self):
         return self.full_name

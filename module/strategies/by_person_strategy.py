@@ -3,7 +3,7 @@ from module.data.purchase import Purchase
 from module.interfaces.cost_strategy import CostStrategy
 
 
-class TotalDayCostByPerson(CostStrategy):
+class ByPersonStrategy(CostStrategy):
     def calculate(self, purchase: Purchase, person: Person):
         if person.days_per_week == 0:
             raise ValueError('Person has no days per week')
@@ -19,6 +19,7 @@ class TotalDayCostByPerson(CostStrategy):
         costs = {}
         for person in purchase.persons:
             costs[person] = self.calculate(purchase, person)
+
         return costs
 
     @staticmethod
