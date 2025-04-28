@@ -55,3 +55,13 @@ class PurchaseService(CRUDService):
 
     def person_has_purchases(self, person_id: int) -> bool:
         return self.repo.get_by_other_id(person_id) is not None
+
+    def get_all_persons(self, purchase_id: int) -> list[Person]:
+        if not isinstance(purchase_id, int) or purchase_id < 0:
+            raise ValueError("ID must be a positive integer")
+
+        purchase = self.repo.get_by_id(purchase_id)
+        if not purchase:
+            raise ValueError("Purchase not found")
+
+        return purchase.persons

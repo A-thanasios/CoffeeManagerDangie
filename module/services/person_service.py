@@ -1,4 +1,5 @@
 from module.data.person import Person
+from module.data.purchase import Purchase
 from module.interfaces.crud_service import CRUDService
 from module.interfaces.repository import Repository
 from module.services.purchase_service import PurchaseService
@@ -37,6 +38,23 @@ class PersonService(CRUDService):
             raise ValueError("No persons found")
 
         return lst
+
+    def get_all_purchases(self, person_id) -> list[Purchase]:
+        if not isinstance(person_id, int) or person_id < 0:
+            raise ValueError("ID must be a positive integer")
+
+        persons = self.purchase_service.get_all_persons(person_id)
+
+        if not persons:
+            raise ValueError("No persons found")
+
+        person_purchases = [self.purchase_service.get(p)
+                            for p in persons if p.id == person_id]
+
+        if not person_purchases:
+            raise ValueError("No purchases found for this person")
+
+        return person_purchases
 
     def remove(self, person_id) -> None:
         if not isinstance(person_id, int) or person_id < 0:

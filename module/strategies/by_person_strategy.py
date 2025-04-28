@@ -4,7 +4,7 @@ from module.interfaces.cost_strategy import CostStrategy
 
 
 class ByPersonStrategy(CostStrategy):
-    def calculate(self, purchase: Purchase, person: Person):
+    def calculate(self, purchase: Purchase, person: Person) -> float:
         if person.days_per_week == 0:
             raise ValueError('Person has no days per week')
 
@@ -15,7 +15,7 @@ class ByPersonStrategy(CostStrategy):
 
         return self.__cost_sum(purchase) * (person.days_per_week / days_sum)
 
-    def calculate_all(self, purchase: Purchase):
+    def calculate_all(self, purchase: Purchase) -> dict[Person, float]:
         costs = {}
         for person in purchase.persons:
             costs[person] = self.calculate(purchase, person)
