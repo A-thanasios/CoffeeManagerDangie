@@ -4,12 +4,12 @@ from module.data.product import Product
 from module.data.person import Person
 from module.data.purchase import Purchase
 from module.data.structs.name import Name
-from module.strategies.by_person_strategy import TotalDayCostByPerson
+from module.strategies.by_person_strategy import ByPersonStrategy
 
 
 class TestTotalDayCostByPerson(unittest.TestCase):
     def setUp(self):
-        self.strategy = TotalDayCostByPerson()
+        self.strategy = ByPersonStrategy()
 
         self.product1 = Product("Starbucks", "Main Street", 20)
         self.product2 = Product("Costa", "Side Street", 15)

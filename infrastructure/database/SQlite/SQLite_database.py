@@ -90,4 +90,4 @@ class SQLiteDatabase(Database):
     
     @property
     def type(self):
-        return "SQLite"
+        return "sqlite"

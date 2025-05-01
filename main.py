@@ -1,5 +1,10 @@
-import os.path
-from datetime import datetime
+import os
+import sys
+from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow
+
+from view.main_window import MainWindow
+
+os.environ['QT_QPA_PLATFORM'] = 'xcb'
 
 from infrastructure.factories.database_factory import DatabaseFactory
 from infrastructure.factories.repository_factory import RepositoryFactory
@@ -24,6 +29,15 @@ def main():
     person_service = PersonService(person_repository, purchase_service)
     app_service = StrategyService(person_service, purchase_service, product_repository, ByPersonStrategy())
 
+    # Initialize the gui
+    app = QApplication(sys.argv)
+
+    window = MainWindow()
+
+    window.show()
+
+    app.exec()
+
 
 if __name__ == "__main__":
-    main() 
+    main()

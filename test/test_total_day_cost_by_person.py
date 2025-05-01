@@ -3,7 +3,7 @@ from module.data.person import Person
 from module.data.product import Product
 from module.data.purchase import Purchase
 from module.data.structs.name import Name
-from module.strategies.by_person_strategy import TotalDayCostByPerson
+from module.strategies.by_person_strategy import ByPersonStrategy
 from datetime import datetime
 
 
@@ -16,7 +16,7 @@ class TestTotalDayCostByPerson(unittest.TestCase):
         self.purchase = Purchase(
             "Test Purchase", [self.person1, self.person2], [self.product1, self.product2], datetime.now()
         )
-        self.strategy = TotalDayCostByPerson()
+        self.strategy = ByPersonStrategy()
 
     def test_calculate_cost_for_person(self):
         cost = self.strategy.calculate(self.purchase, self.person1)
