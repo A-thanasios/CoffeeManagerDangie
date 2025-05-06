@@ -124,7 +124,6 @@ class PersonsWindow(QWidget):
         self.persons = [
             {"image": "view/pexels-eberhardgross-1624496.jpg", "name": "John", "middle_name": "M", "can_update": True},
             {"image": "", "name": "Alice", "middle_name": "B", "can_update": False},
-            {"image": "", "name": "Bob", "middle_name": "C", "can_update": True},
         ]
 
         # Main layout

@@ -37,9 +37,8 @@ class MainWindow(QMainWindow):
         self.tabs.setTabsClosable(False)  # Hide the body of the tabs
 
         # Add tabs
-
-        self.tabs.addTab(self.persons_window, "Persons")
         self.tabs.addTab(self.purchase_window, "Purchases")
+        self.tabs.addTab(self.persons_window, "Persons")
 
 
         # Add the tab widget to the main layout
