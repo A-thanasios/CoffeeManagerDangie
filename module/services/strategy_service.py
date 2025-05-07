@@ -1,5 +1,5 @@
-from module.data.person import Person
-from module.data.purchase import Purchase
+from module.model.person import Person
+from module.model.purchase import Purchase
 from module.interfaces.repository import Repository
 from module.services.person_service import PersonService
 from module.services.purchase_service import PurchaseService

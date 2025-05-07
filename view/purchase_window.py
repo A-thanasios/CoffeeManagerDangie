@@ -134,6 +134,9 @@ class NewPurchaseDialog(QDialog):
     def __init__(self, persons, parent=None):
         super().__init__(parent)
         self.setWindowTitle("New Purchase")
+        #self.setModal(True)
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
 
         self.persons = persons  # List of available persons
         self.selected_persons = {}

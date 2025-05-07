@@ -9,10 +9,10 @@ from infrastructure.factories.database_factory import DatabaseFactory
 from infrastructure.repositories.SQLite_person_repository import SQLitePersonRepository
 from infrastructure.repositories.SQLite_product_repository import SQLiteProductRepository
 from infrastructure.repositories.SQLite_purchase_repository import SQLitePurchaseRepository
-from module.data.person import Person
-from module.data.product import Product
-from module.data.purchase import Purchase
-from module.data.structs.name import Name
+from module.model.person import Person
+from module.model.product import Product
+from module.model.purchase import Purchase
+from module.model.structs.name import Name
 
 
 

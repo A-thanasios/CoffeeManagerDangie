@@ -1,5 +1,5 @@
-from module.data.person import Person
-from module.data.purchase import Purchase
+from module.model.person import Person
+from module.model.purchase import Purchase
 from module.interfaces.cost_strategy import CostStrategy
 
 

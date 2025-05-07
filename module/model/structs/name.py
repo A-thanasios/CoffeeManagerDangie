@@ -2,8 +2,9 @@ class Name:
     def __init__(self, first_name: str, last_name: str, middle_name=''):
         if not first_name or not isinstance(first_name, str) or first_name == '':
             raise ValueError("First name must be a non-empty string.")
-        if not last_name or not isinstance(last_name, str) or last_name == '':
+        if not last_name or not isinstance(last_name, str):
             raise ValueError("Last name must be a non-empty string.")
+
         if (middle_name != '') and not isinstance(middle_name, str):
             raise ValueError("Middle name must be a string or empty string.")
 

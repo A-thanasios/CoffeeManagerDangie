@@ -13,10 +13,10 @@ from infrastructure.database.SQlite.operations.SQLite_purchase_operations import
     insert_purchase, get_purchase_by_id, update_purchase, delete_purchase_by_id, get_all_purchases
 )
 from infrastructure.factories.database_factory import DatabaseFactory
-from module.data.product import Product
-from module.data.person import Person
-from module.data.purchase import Purchase
-from module.data.structs.name import Name
+from module.model.product import Product
+from module.model.person import Person
+from module.model.purchase import Purchase
+from module.model.structs.name import Name
 
 
 
@@ -56,7 +56,7 @@ class TestSQLiteDatabase(unittest.TestCase):
 
     def test_insert_product_with_null_values(self):
         with self.assertRaises(ValueError):
-            Product(None, None, 0)  # Invalid product data
+            Product(None, None, 0)  # Invalid product model
 
     def test_get_all_products(self):
         product1 = Product("Brand1", "Shop1", 50)

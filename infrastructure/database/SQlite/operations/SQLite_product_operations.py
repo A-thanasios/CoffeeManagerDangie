@@ -1,6 +1,6 @@
 import sqlite3
 
-from module.data.product import Product
+from module.model.product import Product
 
 
 def insert_product(db_path, product):

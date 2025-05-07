@@ -1,5 +1,5 @@
-from module.data.person import Person
-from module.data.purchase import Purchase
+from module.model.person import Person
+from module.model.purchase import Purchase
 from module.interfaces.crud_service import CRUDService
 from module.interfaces.repository import Repository
 
@@ -54,7 +54,7 @@ class PurchaseService(CRUDService):
         self.repo.update(purchase)
 
     def person_has_purchases(self, person_id: int) -> bool:
-        return self.repo.get_by_other_id(person_id) is not None
+        return self.repo.get_by_other_id(person_id) != []
 
     def get_all_persons(self, purchase_id: int) -> list[Person]:
         if not isinstance(purchase_id, int) or purchase_id < 0:

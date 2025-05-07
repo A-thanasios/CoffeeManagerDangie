@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from module.data.product import Product
-from module.data.person import Person
+from module.model.product import Product
+from module.model.person import Person
 
 
 class Purchase:

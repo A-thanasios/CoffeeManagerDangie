@@ -1,5 +1,5 @@
-from module.data.person import Person
-from module.data.purchase import Purchase
+from module.model.person import Person
+from module.model.purchase import Purchase
 from module.interfaces.crud_service import CRUDService
 from module.interfaces.repository import Repository
 from module.services.purchase_service import PurchaseService
@@ -35,7 +35,7 @@ class PersonService(CRUDService):
         lst = self.repo.get_all()
 
         if not lst:
-            raise ValueError("No persons found")
+            return []
 
         return lst
 

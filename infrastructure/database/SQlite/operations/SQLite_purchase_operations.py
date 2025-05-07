@@ -3,7 +3,7 @@ from datetime import datetime
 
 from infrastructure.database.SQlite.operations.SQLite_product_operations import get_product_by_id
 from infrastructure.database.SQlite.operations.SQLite_person_operations import get_person_by_id
-from module.data.purchase import Purchase
+from module.model.purchase import Purchase
 
 
 # This module contains functions to interact with the purchase table in the database.

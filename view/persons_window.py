@@ -1,3 +1,4 @@
+
 from PyQt6.QtCore import Qt, QSize, QRect
 from PyQt6.QtWidgets import (
     QWidget,
@@ -6,139 +7,40 @@ from PyQt6.QtWidgets import (
     QListWidget,
     QLabel,
     QPushButton,
-    QCheckBox, QLineEdit, QComboBox, QSlider,
+    QCheckBox, QLineEdit, QComboBox, QSlider, QDialog,
 )
 from PyQt6.QtGui import QPixmap, QColor, QMouseEvent, QPainter, QBrush
 
-
-class CircleSlider(QSlider):
-    def __init__(self, orientation=Qt.Orientation.Vertical, parent=None):
-        super().__init__(orientation, parent)
-        self.circle_color = QColor(0, 0, 0)  # Default circle color
-        self.setTickPosition(QSlider.TickPosition.TicksLeft)
-        self.setTickInterval(1)
-
-    def set_circle_color(self, color):
-        self.circle_color = QColor(color)
-        self.update()
-
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-
-        '''# Získání pozice a rozměrů slideru
-        slider_pos = self.pos()
-        slider_width = self.width()
-        num_ticks = self.maximum() - self.minimum()
-        margin = 12
-
-        for i in range(num_ticks + 1):
-            # Výpočet x souřadnice pro každé kolečko
-            x = slider_pos.x() + margin + i * (slider_width - 2 * margin) / num_ticks
-            y = slider_pos.y() + self.height() // 2 + 20
-
-            # Nakreslení kolečka
-            painter.setBrush(QColor(0, 0, 0))  # Černá
-            painter.setPen(Qt.PenStyle.NoPen)
-            painter.drawEllipse(int(x) - 4, int(y) - 4, 8, 8)'''
-
-        rect = self.rect()
-        tick_count = self.maximum() - self.minimum() + 1
-        if self.orientation() == Qt.Orientation.Vertical:
-            slider_height = rect.height()
-            tick_spacing = slider_height / (tick_count - 1) if tick_count > 1 else 0
-            for i in range(tick_count):
-                y = int(rect.top() + slider_height - i * tick_spacing)
-                x = rect.left() + rect.width() / 2
-                circle_rect = QRect(int(x - 1), int(y - 5), 10, 10)
-                painter.setBrush(QBrush(self.circle_color))
-                painter.drawEllipse(circle_rect)
-        else:
-            slider_width = rect.width()
-            tick_spacing = slider_width / (tick_count - 1) if tick_count > 1 else 0
-
-            for i in range(tick_count):
-                x = int(rect.left() + i * tick_spacing)
-                y = rect.top() + rect.height() / 2
-                circle_rect = QRect(int(x - 6), int(y - 5), 10, 10)
-                painter.setBrush(QBrush(self.circle_color))
-                painter.drawEllipse(circle_rect)
-
-
-class TitledSlider(QWidget):
-    def __init__(self, labels, orientation=Qt.Orientation.Vertical):
-        super().__init__()
-        self.labels = labels
-        self.orientation = orientation
-        self.slider = CircleSlider(orientation)
-        self.slider.setMinimum(0)
-        self.slider.setMaximum(len(labels) - 1)
-        self.slider.setValue(0)
-        self.slider.setTickPosition(QSlider.TickPosition.TicksLeft)
-        self.slider.setTickInterval(1)
-        self.labels_widget = QWidget()
-
-        if orientation == Qt.Orientation.Vertical:
-            labels_layout = QVBoxLayout()
-            labels_layout.setContentsMargins(0, 10, 0, 12)
-            self.labels_widget.setLayout(labels_layout)
-            self.label_objects = []
-            for label_text in self.labels:
-                label = QLabel(label_text)
-                label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-                labels_layout.addWidget(label)
-                self.label_objects.append(label)
-            layout = QHBoxLayout()
-            layout.addWidget(self.labels_widget)
-            layout.addWidget(self.slider)
-        else:
-            layout = QVBoxLayout()
-            self.labels.setAlignment(Qt.AlignmentFlag.AlignLeft)
-            layout.addWidget(self.slider)
-            layout.addWidget(self.labels)
-
-        self.setLayout(layout)
-
-    def set_value(self, value):
-        self.set_label(value)
-
-    def set_label(self, value):
-        self.label.setText(self.labels[value])
-
-    def value(self):
-        return self.slider.value()
-
-    def setValue(self, value):
-        self.slider.setValue(value)
+from module.dto.person_dto import PersonDTO
+from provider.person_provider import PersonProvider
+from view.sliders import TitledSlider
 
 
 class PersonsWindow(QWidget):
-    def __init__(self):
+    def __init__(self, person_provider : PersonProvider):
         super().__init__()
 
+        self.person_provider = person_provider
         self.width = 100
         self.height = 200
 
-        # Sample data (replace with your actual data source)
-        self.persons = [
-            {"image": "view/pexels-eberhardgross-1624496.jpg", "name": "John", "middle_name": "M", "can_update": True},
-            {"image": "", "name": "Alice", "middle_name": "B", "can_update": False},
-        ]
+        # Sample model (replace with your actual model source)
+        self.persons = []
 
         # Main layout
         main_layout = QHBoxLayout()
 
         # List of persons
         self.person_list = QListWidget()
-        for person in self.persons:
-            self.person_list.addItem(person["name"])
+        self.fill_list()
         self.person_list.currentRowChanged.connect(self.display_person)
         self.person_list.setMaximumWidth(100)
         main_layout.addWidget(self.person_list)
 
         # Person display area
+        self.person_layout = QVBoxLayout()
         self.person_display_layout = QHBoxLayout()
+        self.person_layout.addLayout(self.person_display_layout)
 
         self.image_label = QLabel()
 
@@ -157,6 +59,7 @@ class PersonsWindow(QWidget):
 
         self.middle_name_label = QLabel('Middle/nick name')
         self.middle_name_line = QLineEdit()
+        self.middle_name_line.editingFinished.connect(self.edit_person)
         self.middle_name_line.setMaximumWidth(200)
 
         self.middle_name.addWidget(self.middle_name_label)
@@ -170,6 +73,7 @@ class PersonsWindow(QWidget):
 
         self.name_label = QLabel('Name')
         self.name_line = QLineEdit()
+        self.name_line.editingFinished.connect(self.edit_person)
         self.name_line.setMaximumWidth(200)
 
         self.name_layout.addWidget(self.name_label)
@@ -182,9 +86,10 @@ class PersonsWindow(QWidget):
         self.complete_name_layout.addStretch()
 
         self.person_display_layout.addLayout(self.complete_name_layout)
+
         self.person_display_layout.addStretch()
 
-        main_layout.addLayout(self.person_display_layout)
+        main_layout.addLayout(self.person_layout)
 
         # Slider layout
         labels = ['5', '4', '3', '2', '1', '0']
@@ -194,7 +99,22 @@ class PersonsWindow(QWidget):
         self.day_bar.slider.setMinimumWidth(50)
         self.day_bar.slider.setSingleStep(1)
 
-        main_layout.addWidget(self.day_bar)
+        self.person_display_layout.addWidget(self.day_bar)
+
+        # Operations layout
+        self.operations_layout = QHBoxLayout()
+        self.new_person_button = QPushButton("New Person")
+        self.new_person_button.setMaximumWidth(100)
+        self.new_person_button.clicked.connect(self.new_person)
+        self.operations_layout.addWidget(self.new_person_button)
+        self.delete_person_button = QPushButton("Delete Person")
+        self.delete_person_button.setMaximumWidth(100)
+        self.delete_person_button.clicked.connect(self.delete_person)
+        self.operations_layout.addWidget(self.delete_person_button)
+        self.operations_layout.addStretch()
+        self.person_layout.addLayout(self.operations_layout)
+
+
         main_layout.addStretch()
         self.setLayout(main_layout)
 
@@ -202,19 +122,159 @@ class PersonsWindow(QWidget):
         self.toggle_editing(False)
         self.display_person(0)
 
+    def fill_list(self):
+        self.persons = self.person_provider.get([])
+        self.person_list.clear()
+        for person in self.persons:
+            self.person_list.addItem(person.first_name + " " + person.last_name)
+
     def display_person(self, index):
+        if len(self.persons) == 0:
+            self.set_layout_visible(self.person_display_layout, False)
+            return
+
         person = self.persons[index]
-        if person['image'] == '':
+        self.set_layout_visible(self.person_display_layout, True)
+        if person.img == '':
             image = QPixmap(self.width, self.height)
             image.fill(QColor('green'))
             self.image_label.setPixmap(image)
         else:
-            self.image_label.setPixmap(QPixmap(person["image"]).scaled(self.width, self.height))
+            self.image_label.setPixmap(QPixmap(person.img).scaled(self.width, self.height))
 
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.name_line.setText(person['name'])
-        self.middle_name_line.setText(person['middle_name'])
+        self.name_line.setText(person.first_name + " " + person.last_name)
+        self.middle_name_line.setText(person.middle_name)
+        self.person_list.setCurrentRow(index)
+        self.day_bar.setValue(person.days_per_week)
+
+    def set_layout_visible(self, layout, enabled):
+        for i in range(layout.count()):
+            item = layout.itemAt(i)
+            widget = item.widget()
+            if widget:
+                widget.setVisible(enabled)
+            elif item.layout():
+                self.set_layout_visible(item.layout(), enabled)
 
     def toggle_editing(self, state):
         self.name_line.setEnabled(state == Qt.CheckState.Checked.value)
         self.middle_name_line.setEnabled(state == Qt.CheckState.Checked.value)
+
+    def edit_person(self):
+        # Update the person's name and middle name
+        current_row = self.person_list.currentRow()
+        if current_row >= 0:
+            self.persons[current_row]["name"] = self.name_line.text()
+            self.persons[current_row]["middle_name"] = self.middle_name_line.text()
+            self.person_list.item(current_row).setText(self.persons[current_row]["name"])
+
+    def new_person(self):
+        dialog = NewPersonDialog(self)
+        result = dialog.exec()
+
+
+
+        if result == QDialog.DialogCode.Accepted:
+            middle_name, name, days_per_week = dialog.get_person_info()
+            first_name, last_name = name.split(' ', 1) if ' ' in name else (name, '')
+            new_person = PersonDTO(id= 9999,
+                                    first_name=first_name,
+                                   last_name=last_name,
+                                   middle_name=middle_name,
+                                   days_per_week=days_per_week,
+                                   is_buying=True,
+                                   img=''
+                                   )
+            self.person_provider.create(new_person)
+            self.fill_list()
+            self.display_person(len(self.persons) - 1)
+            '''self.persons.append(new_person)
+            self.person_list.addItem(new_person["name"])
+            self.person_list.setCurrentRow(len(self.persons) - 1)
+            self.display_person(len(self.persons) - 1)'''
+
+
+
+    def delete_person(self):
+        # Remove the selected person from the list
+        current_row = self.person_list.currentRow()
+        if current_row >= 0:
+            person_id = self.persons[current_row].id
+            self.person_provider.delete(person_id)
+            self.fill_list()
+            if current_row > 0:
+                self.display_person(current_row - 1)
+            elif current_row == 0:
+                self.display_person(0)
+
+
+class NewPersonDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("New Person")
+        self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
+
+        # Middle name input
+        self.middle_name_label = QLabel("Middle Name:")
+        self.middle_name_input = QLineEdit()
+
+        # Name input
+        self.name_label = QLabel("Name:")
+        self.name_input = QLineEdit()
+
+        # Days per week input
+        self.days_per_week_label = QLabel("Days per Week:")
+        self.days_per_week_input = QSlider(Qt.Orientation.Vertical)
+        self.days_per_week_input.setRange(0, 5)
+
+
+
+
+        # Buttons
+        self.ok_button = QPushButton("OK")
+        self.cancel_button = QPushButton("Cancel")
+
+        # Layout
+        input_layout = QVBoxLayout()
+
+        # Middle name layout
+        middle_name_layout = QHBoxLayout()
+        middle_name_layout.addWidget(self.middle_name_label)
+        middle_name_layout.addWidget(self.middle_name_input)
+
+        input_layout.addLayout(middle_name_layout)
+
+        # Name layout
+        name_layout = QHBoxLayout()
+        name_layout.addWidget(self.name_label)
+        name_layout.addWidget(self.name_input)
+
+        input_layout.addLayout(name_layout)
+
+        # Days per week layout
+        days_per_week_layout = QHBoxLayout()
+        days_per_week_layout.addWidget(self.days_per_week_label)
+        days_per_week_layout.addWidget(self.days_per_week_input)
+
+        input_layout.addLayout(days_per_week_layout)
+
+
+
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addWidget(self.ok_button)
+        buttons_layout.addWidget(self.cancel_button)
+
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(input_layout)
+        main_layout.addLayout(buttons_layout)
+
+        self.setLayout(main_layout)
+
+        # Connections
+        self.ok_button.clicked.connect(self.accept)
+        self.cancel_button.clicked.connect(self.reject)
+
+    def get_person_info(self):
+        return self.middle_name_input.text(), self.name_input.text(), self.days_per_week_input.value()

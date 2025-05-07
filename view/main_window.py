@@ -11,16 +11,16 @@ from view.title_bar import TitleBar
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, person_provider):
         super().__init__()
-
+        self.person_provider = person_provider
         self.title_bar = TitleBar(self)
         self.purchase_window = PurchaseWindow()
-        self.persons_window = PersonsWindow()
+        self.persons_window = PersonsWindow(self.person_provider)
 
         self.setWindowTitle(app_name)
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
 
         # Get the screen geometry
         self.screen = QApplication.primaryScreen()

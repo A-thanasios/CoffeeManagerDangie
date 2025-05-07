@@ -1,5 +1,5 @@
 import unittest
-from module.data.structs.name import Name
+from module.model.structs.name import Name
 
 
 class TestName(unittest.TestCase):

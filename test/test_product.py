@@ -1,5 +1,5 @@
 import unittest
-from module.data.product import Product
+from module.model.product import Product
 
 
 class TestProduct(unittest.TestCase):

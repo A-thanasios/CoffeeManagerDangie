@@ -1,10 +1,10 @@
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock
-from module.data.person import Person
-from module.data.purchase import Purchase
-from module.data.product import Product
-from module.data.structs.name import Name
+from module.model.person import Person
+from module.model.purchase import Purchase
+from module.model.product import Product
+from module.model.structs.name import Name
 from module.services.strategy_service import StrategyService
 
 class TestStrategyService(unittest.TestCase):

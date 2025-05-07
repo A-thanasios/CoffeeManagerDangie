@@ -1,4 +1,4 @@
-from module.data.structs.name import Name
+from module.model.structs.name import Name
 
 
 class Person:

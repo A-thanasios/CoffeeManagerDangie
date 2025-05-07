@@ -1,8 +1,8 @@
 import unittest
-from module.data.person import Person
-from module.data.product import Product
-from module.data.purchase import Purchase
-from module.data.structs.name import Name
+from module.model.person import Person
+from module.model.product import Product
+from module.model.purchase import Purchase
+from module.model.structs.name import Name
 from module.strategies.by_person_strategy import ByPersonStrategy
 from datetime import datetime
 
