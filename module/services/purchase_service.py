@@ -33,7 +33,7 @@ class PurchaseService(CRUDService):
         lst = self.repo.get_all()
 
         if not lst:
-            raise ValueError("No purchases found")
+            return []
 
         return lst
 

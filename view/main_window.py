@@ -11,11 +11,15 @@ from view.title_bar import TitleBar
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, person_provider):
+    def __init__(self, person_provider, purchase_provider, product_provider, app_service):
         super().__init__()
         self.person_provider = person_provider
+        self.purchase_provider = purchase_provider
+        self.product_provider = product_provider
+        self.app_service = app_service
+
         self.title_bar = TitleBar(self)
-        self.purchase_window = PurchaseWindow()
+        self.purchase_window = PurchaseWindow(self.person_provider, self.purchase_provider, self.product_provider, self.app_service)
         self.persons_window = PersonsWindow(self.person_provider)
 
         self.setWindowTitle(app_name)

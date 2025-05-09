@@ -5,6 +5,8 @@ from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow
 from module.model.person import Person
 from module.model.structs.name import Name
 from provider.person_provider import PersonProvider
+from provider.product_provider import ProductProvider
+from provider.purchase_provider import PurchaseProvider
 from view.main_window import MainWindow
 
 os.environ['QT_QPA_PLATFORM'] = 'xcb'
@@ -34,11 +36,14 @@ def main():
 
     # Initialize the providers
     person_provider = PersonProvider(person_service)
+    purchase_provider = PurchaseProvider(purchase_service, person_service, product_repository)
+    product_provider = ProductProvider(product_repository)
+
 
     # Initialize the gui
     app = QApplication(sys.argv)
 
-    window = MainWindow(person_provider)
+    window = MainWindow(person_provider, purchase_provider, product_provider, app_service)
 
     window.show()
 

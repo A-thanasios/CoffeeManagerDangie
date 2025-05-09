@@ -5,6 +5,9 @@ from PyQt6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QHBoxLayout, QLab
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+from module.services.strategy_service import StrategyService
+
+
 class MplCanvas(FigureCanvas):
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
@@ -13,21 +16,21 @@ class MplCanvas(FigureCanvas):
         super().__init__(fig)
 
 class PurchaseWindow(QWidget):
-    def __init__(self):
+    def __init__(self, person_provider, purchase_provider, product_provider, app_service):
         super().__init__()
+        self.person_provider = person_provider
+        self.purchase_provider = purchase_provider
+        self.product_provider = product_provider
+        self.app_service = app_service
 
-        self.purchases = [
-            {"name": "Purchase 1", 'price' : {"Person1": 100, "Person2": 200, "Person3": 300}},
-            {"name": "Purchase 2", "price": {"Person1": 50, "Person2": 88, "Person3": 96}},
-            {"name": "Purchase 3", "price": {"Person1": 1, "Person2": 2, "Person3": 3}},
-        ]
+
+        self.purchases = []
 
         main_layout = QHBoxLayout()
 
         # List of purchases
         self.purchase_list = QListWidget()
-        for purchase in self.purchases:
-            self.purchase_list.addItem(purchase["name"])
+        self.fill_list()
 
         self.purchase_list.currentRowChanged.connect(self.display_purchase)
         self.purchase_list.setMaximumWidth(100)
@@ -74,14 +77,30 @@ class PurchaseWindow(QWidget):
         main_layout.addStretch()
         self.setLayout(main_layout)
 
-        self.display_purchase(0)  # Display the first purchase by default
+        # Display the first purchase by default
+        self.display_purchase(0)
+
+    def fill_list(self):
+        self.purchases = self.purchase_provider.get([])
+
+        self.purchase_list.clear()
+        for purchase in self.purchases:
+            self.purchase_list.addItem(purchase["name"])
+
 
     def display_purchase(self, index):
+        if len(self.purchases) == 0:
+            return
+
         purchase = self.purchases[index]
         self.canvas.axes.cla()
-        self.purchases_name.setText(purchase["name"])
-        self.canvas.axes.pie([x for x in purchase['price'].values()],
-                             labels=[x for x in purchase['price'].keys()],
+        self.purchases_name.setText(purchase.name)
+
+        strategy = self.app_service.calculate_purchase_costs(purchase.id)
+
+
+        self.canvas.axes.pie([x for x in strategy.keys()],
+                             labels=[x for x in strategy.values()],
                              autopct='%1.1f%%',
                              startangle=90)
         self.canvas.draw()
@@ -92,22 +111,20 @@ class PurchaseWindow(QWidget):
             if widget is not None:
                 widget.deleteLater()
         # Add new persons
-        for person in purchase['price'].keys():
-            person_label = QLabel(person)
-            person_label.setText(f"{person}: {purchase['price'][person]}")
+        for key, value in strategy.items():
+            person_label = QLabel(key)
+            person_label.setText(f"{key}: {value}")
             person_label.setAlignment(Qt.AlignmentFlag.AlignTop)
             self.persons_layout.addWidget(person_label)
 
         self.persons_layout.addStretch()
 
-        sum_label = QLabel(f"---\nTotal: {sum(purchase['price'].values())}")
+        sum_label = QLabel(f"---\nTotal: {sum(strategy.values())}")
         sum_label.setAlignment(Qt.AlignmentFlag.AlignBottom)
         self.persons_layout.addWidget(sum_label)
 
     def new_purchase(self):
-        # Example list of persons (replace with your actual list)
-        persons = [{"Person1" : 999}, {"Person2":888}, {"Person3":777}, {"Person4":666}]
-
+        persons = self.person_provider.get([])
         dialog = NewPurchaseDialog(persons, self)
         result = dialog.exec()
 
@@ -150,7 +167,7 @@ class NewPurchaseDialog(QDialog):
         self.persons_list = QListWidget()
         self.persons_list.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         for person in self.persons:
-            person_name = list(person.keys())[0]  # Extract person name
+            person_name = person.first_name  # Extract person name
             item = QListWidgetItem(person_name)
             item.setFlags(item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             item.setCheckState(Qt.CheckState.Unchecked)
