@@ -45,8 +45,15 @@ class PersonProvider(Provider):
         person = Person(name, new_person.days_per_week, new_person.is_buying, new_person.img)
         self.person_service.add(person)
 
-    def update(self, item_id: str | list[str]) -> None:
-        pass
+    def update(self, person_id: str, updated_data: dict) -> None:
+        person = self.person_service.get(person_id)
+        for key, value in updated_data.items():
+            if 'name' in key:
+                setattr(person.name, key, value)
+            else:
+                setattr(person, key, value)
 
-    def delete(self, item_id: str | list[str]) -> None:
+        self.person_service.update(person)
+
+    def delete(self, item_id: str) -> None:
         self.person_service.remove(item_id)

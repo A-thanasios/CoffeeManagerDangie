@@ -27,8 +27,6 @@ def main():
     product_repository =  RepositoryFactory(db).create_product_repository()
     purchase_repository =  RepositoryFactory(db).create_purchase_repository()
 
-    if not person_repository.get_all():
-        person_repository.add(Person(Name('Dick', 'Grayson', 'Robin'), 5, True, ''))
     # Initialize the services
     purchase_service = PurchaseService(purchase_repository)
     person_service = PersonService(person_repository, purchase_service)

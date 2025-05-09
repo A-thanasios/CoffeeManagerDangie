@@ -24,7 +24,7 @@ class PersonsWindow(QWidget):
         self.width = 100
         self.height = 200
 
-        # Sample model (replace with your actual model source)
+
         self.persons = []
 
         # Main layout
@@ -93,11 +93,16 @@ class PersonsWindow(QWidget):
 
         # Slider layout
         labels = ['5', '4', '3', '2', '1', '0']
-        self.day_bar = TitledSlider(labels)
-        self.day_bar.slider.setMaximumHeight(400)
-        self.day_bar.slider.setMinimumHeight(200)
-        self.day_bar.slider.setMinimumWidth(50)
-        self.day_bar.slider.setSingleStep(1)
+        self.day_bar = QSlider(Qt.Orientation.Vertical)
+        self.day_bar.setMaximumHeight(400)
+        self.day_bar.setMinimumHeight(200)
+        self.day_bar.setMinimumWidth(50)
+        self.day_bar.setSingleStep(1)
+        self.day_bar.setRange(0, 5)
+        self.day_bar.setTickInterval(1)
+        self.day_bar.setTickPosition(QSlider.TickPosition.TicksLeft)
+        self.day_bar.valueChanged.connect(self.update_day_bar)
+
 
         self.person_display_layout.addWidget(self.day_bar)
 
@@ -165,9 +170,26 @@ class PersonsWindow(QWidget):
         # Update the person's name and middle name
         current_row = self.person_list.currentRow()
         if current_row >= 0:
-            self.persons[current_row]["name"] = self.name_line.text()
-            self.persons[current_row]["middle_name"] = self.middle_name_line.text()
-            self.person_list.item(current_row).setText(self.persons[current_row]["name"])
+            name = self.name_line.text()
+            first_name, last_name = name.split(' ', 1) if ' ' in name else (name, '')
+            middle_name = self.middle_name_line.text()
+            self.person_provider.update(self.persons[current_row].id,
+                                        {"first_name": first_name,
+                                         "last_name": last_name,
+                                         "middle_name": middle_name})
+            self.fill_list()
+            self.display_person(current_row)
+
+    def update_day_bar(self):
+        # Update the person's days per week
+        current_row = self.person_list.currentRow()
+        if current_row >= 0:
+            person = self.persons[current_row]
+            if person.days_per_week != self.day_bar.value():
+                self.person_provider.update(person.id,
+                                            {"days_per_week": self.day_bar.value()})
+                self.fill_list()
+                self.display_person(current_row)
 
     def new_person(self):
         dialog = NewPersonDialog(self)
