@@ -23,7 +23,7 @@ class ProductProvider(Provider):
                     ))
                 return ls
         else:
-            product = self.product_service.get(product_id)
+            product = self.product_service.get_by_id(product_id)
             return ProductDTO(
                         id=product.id,
                         name=product.name,
@@ -31,8 +31,8 @@ class ProductProvider(Provider):
                         cost= product.price
                     )
 
-    def create(self, product: ProductDTO) -> None:
-        self.product_service.create(Product(
+    def create(self, product: ProductDTO) -> int:
+        return self.product_service.add(Product(
             product.name,
             product.shop,
             product.cost

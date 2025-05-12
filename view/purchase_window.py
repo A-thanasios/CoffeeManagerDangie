@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, QLineEdit, \
     QAbstractItemView, QListWidgetItem, QTableWidget, QTableWidgetItem, QCheckBox
@@ -5,6 +7,8 @@ from PyQt6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QHBoxLayout, QLab
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+from module.dto.product_dto import ProductDTO
+from module.dto.purchase_dto import PurchaseDTO
 from module.services.strategy_service import StrategyService
 from provider.person_provider import PersonProvider
 
@@ -86,7 +90,11 @@ class PurchaseWindow(QWidget):
 
         self.purchase_list.clear()
         for purchase in self.purchases:
-            self.purchase_list.addItem(purchase["name"])
+            new_purchase = QListWidgetItem()
+            new_purchase.setData(Qt.ItemDataRole.UserRole, purchase)
+            new_purchase.setText(purchase.name)
+            self.purchase_list.addItem(new_purchase)
+
 
 
     def display_purchase(self, index):
@@ -100,8 +108,8 @@ class PurchaseWindow(QWidget):
         strategy = self.app_service.calculate_purchase_costs(purchase.id)
 
 
-        self.canvas.axes.pie([x for x in strategy.keys()],
-                             labels=[x for x in strategy.values()],
+        self.canvas.axes.pie([x for x in strategy.values()],
+                             labels=[x.name.first_name for x in strategy.keys()],
                              autopct='%1.1f%%',
                              startangle=90)
         self.canvas.draw()
@@ -113,8 +121,8 @@ class PurchaseWindow(QWidget):
                 widget.deleteLater()
         # Add new persons
         for key, value in strategy.items():
-            person_label = QLabel(key)
-            person_label.setText(f"{key}: {value}")
+            person_label = QLabel(key.name.full_name)
+            person_label.setText(f"{key.name.full_name}: {value}")
             person_label.setAlignment(Qt.AlignmentFlag.AlignTop)
             self.persons_layout.addWidget(person_label)
 
@@ -126,14 +134,24 @@ class PurchaseWindow(QWidget):
 
     def new_purchase(self):
         persons = self.person_provider.get([])
-        dialog = NewPurchaseDialog(persons, self.product_provider, self)
+        dialog = NewPurchaseDialog(persons, self)
         result = dialog.exec()
 
         if result == QDialog.DialogCode.Accepted:
-            purchase_name, selected_persons = dialog.get_purchase_info()
-            new_purchase = {"name": purchase_name, "price": selected_persons}
-            self.purchases.append(new_purchase)
-            self.purchase_list.addItem(new_purchase["name"])
+            purchase_name, selected_persons, products = dialog.get_purchase_info()
+            product_id_list = []
+            for product in products:
+                product_id_list.append(self.product_provider.create(product))
+
+            if not product_id_list:
+                return
+
+            self.purchase_provider.create(PurchaseDTO(id=0,
+                                                      name=purchase_name,
+                                                      persons_id=[person.id for person in selected_persons],
+                                                      products_id=product_id_list,
+                                                      date=datetime.now()))
+            self.fill_list()
             self.purchase_list.setCurrentRow(len(self.purchases) - 1)
 
     def delete_purchase(self):
@@ -141,8 +159,8 @@ class PurchaseWindow(QWidget):
         current_row = self.purchase_list.currentRow()
         if current_row != -1:
             # Remove the purchase from the list and the display
-            self.purchases.pop(current_row)
-            self.purchase_list.takeItem(current_row)
+            self.purchase_provider.delete(self.purchase_list.item(current_row).data(Qt.ItemDataRole.UserRole).id)
+            self.fill_list()
             if current_row < len(self.purchases):
                 self.purchase_list.setCurrentRow(current_row)
             else:
@@ -151,7 +169,7 @@ class PurchaseWindow(QWidget):
 
 
 class NewPurchaseDialog(QDialog):
-    def __init__(self, persons, products, parent=None):
+    def __init__(self, persons, parent=None):
         super().__init__(parent)
         self.setWindowTitle("New Purchase")
         #self.setModal(True)
@@ -176,8 +194,12 @@ class NewPurchaseDialog(QDialog):
         self.persons_table.setRowCount(len(self.persons))
         self.persons_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
+
+
+
         for row, person in enumerate(self.persons):
             name_item = QTableWidgetItem(person.first_name)
+            name_item.setData(Qt.ItemDataRole.UserRole, person)
             name_item.setFlags(name_item.flags() & ~Qt.ItemFlag.ItemIsUserCheckable)
             self.persons_table.setItem(row, 0, name_item)
 
@@ -269,37 +291,30 @@ class NewPurchaseDialog(QDialog):
         self.product_table.itemChanged.connect(self.validate_product_table)
 
     def get_purchase_info(self):
-        checked_persons = {}
+        checked_persons = []
         for row in range(self.persons_table.rowCount()):
-            if self.persons_table.item(row, 1).checkState() == Qt.CheckState.Checked:
-                person_name = self.persons_table.item(row, 0)
-                # Find the corresponding person object
-                for person in self.persons:
-                    if person.first_name == person_name:
-                        checked_persons[person_name] = person
-                        break
+            person = self.persons_table.item(row, 0).data(Qt.ItemDataRole.UserRole)
+            if person.is_buying:
+                    checked_persons.append(person)
 
-        checked_products = {}
+        checked_products = []
         for row in range(self.product_table.rowCount()):
-            product_name = self.product_table.item(row, 0).text()
-            shop_name = self.product_table.item(row, 1).text()
-            price = self.product_table.item(row, 2).text()
-            checked_products[product_name] = {"shop": shop_name, "price": price}
+            checked_products.append(ProductDTO(id=row,
+                                               name=self.product_table.item(row, 0).text(),
+                                               shop=self.product_table.item(row, 1).text(),
+                                               cost=int(self.product_table.item(row, 2).text())))
 
 
         return self.name_input.text(), checked_persons, checked_products
 
     def add_product(self):
         self.product_table.insertRow(self.product_table.rowCount())
-        '''for column in range(self.product_table.columnCount()):
-            item = QTableWidgetItem()
-            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.product_table.setItem(self.product_table.rowCount(), column, item)'''
 
     def remove_product(self):
         self.product_table.removeRow(self.product_table.rowCount() - 1)
 
-    def validate_product_table(self, item):
+    @staticmethod
+    def validate_product_table(item):
         column = item.column()
         text = item.text()
 

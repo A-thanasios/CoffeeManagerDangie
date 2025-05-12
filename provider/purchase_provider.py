@@ -44,10 +44,10 @@ class PurchaseProvider(Provider):
 
         products = []
         for product_id in new_purchase.products_id:
-            product = self.product_service.get(product_id)
+            product = self.product_service.get_by_id(product_id)
             products.append(product)
 
-        self.purchase_service.create(Purchase(new_purchase.name,
+        self.purchase_service.add(Purchase(new_purchase.name,
                                               persons,
                                                products,
                                                new_purchase.date))
@@ -73,4 +73,4 @@ class PurchaseProvider(Provider):
         self.purchase_service.update(purchase)
 
     def delete(self, item_id: str | list[str]) -> None:
-        self.purchase_service.delete(item_id)
+        self.purchase_service.remove(item_id)
