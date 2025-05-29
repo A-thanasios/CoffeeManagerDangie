@@ -1,9 +1,9 @@
-from module.model.person import Person
-from module.model.purchase import Purchase
-from module.interfaces.repository import Repository
-from module.services.person_service import PersonService
-from module.services.purchase_service import PurchaseService
-from module.strategies.by_person_strategy import ByPersonStrategy
+from Module.model.person import Person
+from Module.model.purchase import Purchase
+from Module.interfaces.repository import Repository
+from Module.services.person_service import PersonService
+from Module.services.purchase_service import PurchaseService
+from Module.strategies.by_person_strategy import ByPersonStrategy
 
 
 class StrategyService:

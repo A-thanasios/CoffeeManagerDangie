@@ -1,6 +1,6 @@
 from configuration.settings import db_type, db_path
 
-from module.interfaces.database import Database
+from Module.interfaces.database import Database
 from infrastructure.database.SQlite.SQLite_database import SQLiteDatabase
 
 

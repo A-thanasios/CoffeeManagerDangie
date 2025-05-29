@@ -1,7 +1,7 @@
-from module.model.person import Person
-from module.model.purchase import Purchase
-from module.interfaces.crud_service import CRUDService
-from module.interfaces.repository import Repository
+from Module.model.person import Person
+from Module.model.purchase import Purchase
+from Module.interfaces.crud_service import CRUDService
+from Module.interfaces.repository import Repository
 
 
 class PurchaseService(CRUDService):
@@ -9,6 +9,7 @@ class PurchaseService(CRUDService):
         self.repo = repo
 
     def add(self, purchase: Purchase) -> Purchase.id:
+        print('aaaa')
         if not isinstance(purchase, Purchase):
             raise ValueError("arg must be a Purchase object")
 

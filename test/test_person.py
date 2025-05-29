@@ -1,13 +1,13 @@
 import unittest
 
-from module.model.person import Person
-from module.model.structs.name import Name
+from Module.model.person import Person
+from Module.model.data.person_detail import PersonDetail
 
 
 class TestPerson(unittest.TestCase):
     def setUp(self):
         """Set up test cases"""
-        self.test_name = Name("John", "Doe")
+        self.test_name = PersonDetail("John", "Doe")
         self.test_person = Person(self.test_name, 5, True, "test.jpg")
     
     def test_initialization(self):
@@ -22,7 +22,7 @@ class TestPerson(unittest.TestCase):
         self.assertEqual(self.test_person.name, self.test_name)
         
         # Test setter with valid Name object
-        new_name = Name("Jane", "Smith")
+        new_name = PersonDetail("Jane", "Smith")
         self.test_person.name = new_name
         self.assertEqual(self.test_person.name, new_name)
         

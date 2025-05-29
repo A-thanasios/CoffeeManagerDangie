@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from module.interfaces.repository import Repository
+from Module.interfaces.repository import Repository
 
 
 class CRUDService(ABC):

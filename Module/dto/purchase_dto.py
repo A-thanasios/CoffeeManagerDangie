@@ -1,6 +1,7 @@
 from datetime import datetime
-
 from pydantic import BaseModel
+
+from Module import PurchaseDetail
 
 
 class PurchaseDTO(BaseModel):
@@ -14,3 +15,4 @@ class PurchaseDTO(BaseModel):
     persons_id: list[int]
     products_id: list[int]
     date: datetime
+    purchase_detail: list[object]

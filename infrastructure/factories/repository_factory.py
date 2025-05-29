@@ -1,8 +1,8 @@
-from module.interfaces.database import Database
+from Module.interfaces.database import Database
 from infrastructure.repositories.SQLite_person_repository import SQLitePersonRepository
 from infrastructure.repositories.SQLite_product_repository import SQLiteProductRepository
 from infrastructure.repositories.SQLite_purchase_repository import SQLitePurchaseRepository
-from module.interfaces.repository import Repository
+from Module.interfaces.repository import Repository
 
 
 class RepositoryFactory:

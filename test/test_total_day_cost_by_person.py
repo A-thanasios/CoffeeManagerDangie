@@ -1,16 +1,16 @@
 import unittest
-from module.model.person import Person
-from module.model.product import Product
-from module.model.purchase import Purchase
-from module.model.structs.name import Name
-from module.strategies.by_person_strategy import ByPersonStrategy
+from Module.model.person import Person
+from Module.model.product import Product
+from Module.model.purchase import Purchase
+from Module.model.data.person_detail import PersonDetail
+from Module.strategies.by_person_strategy import ByPersonStrategy
 from datetime import datetime
 
 
 class TestTotalDayCostByPerson(unittest.TestCase):
     def setUp(self):
-        self.person1 = Person(Name("Alice", "Wonderland"), 3)
-        self.person2 = Person(Name("Bob", "Builder"), 2)
+        self.person1 = Person(PersonDetail("Alice", "Wonderland"), 3)
+        self.person2 = Person(PersonDetail("Bob", "Builder"), 2)
         self.product1 = Product("Starbucks", "Main Street", 20)
         self.product2 = Product("Costa", "Side Street", 15)
         self.purchase = Purchase(
@@ -23,7 +23,7 @@ class TestTotalDayCostByPerson(unittest.TestCase):
         self.assertAlmostEqual(cost, 21.0, places=2)
 
     def test_calculate_cost_with_no_days(self):
-        person_no_days = Person(Name("Zero", "Days"), 0)
+        person_no_days = Person(PersonDetail("Zero", "Days"), 0)
         with self.assertRaises(ValueError):
             self.strategy.calculate(self.purchase, person_no_days)
 

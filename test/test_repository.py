@@ -9,10 +9,10 @@ from infrastructure.factories.database_factory import DatabaseFactory
 from infrastructure.repositories.SQLite_person_repository import SQLitePersonRepository
 from infrastructure.repositories.SQLite_product_repository import SQLiteProductRepository
 from infrastructure.repositories.SQLite_purchase_repository import SQLitePurchaseRepository
-from module.model.person import Person
-from module.model.product import Product
-from module.model.purchase import Purchase
-from module.model.structs.name import Name
+from Module.model.person import Person
+from Module.model.product import Product
+from Module.model.purchase import Purchase
+from Module.model.data.person_detail import PersonDetail
 
 
 
@@ -30,7 +30,7 @@ class TestRepositoryIntegration(unittest.TestCase):
 
     def test_full_integration(self):
         # Insert Person
-        person = Person(Name("Alice", "Smith", ""), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("Alice", "Smith", ""), 3, True, "avatar.jpg")
         person.id = self.person_repo.add(person)
         retrieved_person = self.person_repo.get_by_id(person.id)
         self.assertEqual(retrieved_person.name.first_name, "Alice")
@@ -50,7 +50,7 @@ class TestRepositoryIntegration(unittest.TestCase):
         self.assertEqual(len(retrieved_purchase.products), 1)
 
     def test_insert_with_invalid_relationships(self):
-        person = Person(Name("Invalid", "Person", ""), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("Invalid", "Person", ""), 3, True, "avatar.jpg")
         product = Product("Invalid", "Shop", 100, "product.jpg")
         person.id = 9999  # Non-existent ID
         product.id = 9999  # Non-existent ID
@@ -60,7 +60,7 @@ class TestRepositoryIntegration(unittest.TestCase):
 
 
     def test_get_persons_by_purchase_id(self):
-        person = Person(Name("Alice", "Smith", ""), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("Alice", "Smith", ""), 3, True, "avatar.jpg")
         product = Product("Brand", "Shop", 100, "product.jpg")
         person.id = self.person_repo.add(person)
         product.id = self.product_repo.add(product)
@@ -72,7 +72,7 @@ class TestRepositoryIntegration(unittest.TestCase):
         self.assertEqual(persons[0].name.first_name, "Alice")
 
     def test_get_products_by_person_id(self):
-        person = Person(Name("Bob", "Jones", ""), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("Bob", "Jones", ""), 3, True, "avatar.jpg")
         product = Product("Brand", "Shop", 100, "product.jpg")
         person.id = self.person_repo.add(person)
         product.id = self.product_repo.add(product)
@@ -84,7 +84,7 @@ class TestRepositoryIntegration(unittest.TestCase):
         self.assertEqual(products[0].brand_name, "Brand")
 
     def test_get_purchases_by_person_id(self):
-        person = Person(Name("Charlie", "Brown", ""), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("Charlie", "Brown", ""), 3, True, "avatar.jpg")
         product = Product("Brand", "Shop", 100, "product.jpg")
         person.id = self.person_repo.add(person)
         product.id = self.product_repo.add(product)

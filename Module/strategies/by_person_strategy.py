@@ -1,6 +1,6 @@
-from module.model.person import Person
-from module.model.purchase import Purchase
-from module.interfaces.cost_strategy import CostStrategy
+from Module.model.person import Person
+from Module.model.purchase import Purchase
+from Module.interfaces.cost_strategy import CostStrategy
 
 
 class ByPersonStrategy(CostStrategy):

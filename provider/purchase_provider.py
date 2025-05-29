@@ -1,6 +1,6 @@
-from module.dto.purchase_dto import PurchaseDTO
-from module.interfaces.Provider import Provider
-from module.model.purchase import Purchase
+from Module.dto.purchase_dto import PurchaseDTO
+from Module.interfaces.Provider import Provider
+from Module.model.purchase import Purchase
 
 
 class PurchaseProvider(Provider):
@@ -40,11 +40,15 @@ class PurchaseProvider(Provider):
         persons  = []
         for person_id in new_purchase.persons_id:
             person = self.person_service.get(person_id)
+            print(person_id)
+
             persons.append(person)
 
         products = []
         for product_id in new_purchase.products_id:
+
             product = self.product_service.get_by_id(product_id)
+            print(product)
             products.append(product)
 
         self.purchase_service.add(Purchase(new_purchase.name,

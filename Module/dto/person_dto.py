@@ -7,10 +7,7 @@ class PersonDTO(BaseModel):
     """
 
     id: int
-    first_name: str
-    last_name: str
-    middle_name: str
+    name: str
+    e_mail: str
     days_per_week: int
     is_buying: bool
-    img: str
-

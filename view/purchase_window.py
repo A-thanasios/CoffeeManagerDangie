@@ -7,10 +7,8 @@ from PyQt6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QHBoxLayout, QLab
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from module.dto.product_dto import ProductDTO
-from module.dto.purchase_dto import PurchaseDTO
-from module.services.strategy_service import StrategyService
-from provider.person_provider import PersonProvider
+from Module.dto.product_dto import ProductDTO
+from Module.dto.purchase_dto import PurchaseDTO
 
 
 class MplCanvas(FigureCanvas):

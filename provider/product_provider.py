@@ -1,6 +1,6 @@
-from module.dto.product_dto import ProductDTO
-from module.interfaces.Provider import Provider
-from module.model.product import Product
+from Module.dto.product_dto import ProductDTO
+from Module.interfaces.Provider import Provider
+from Module.model.product import Product
 
 
 class ProductProvider(Provider):

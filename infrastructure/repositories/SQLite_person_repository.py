@@ -1,4 +1,4 @@
-from module.interfaces.repository import Repository
+from Module.interfaces.repository import Repository
 
 from infrastructure.database.SQlite.operations.SQLite_person_operations import (
     insert_person,

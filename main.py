@@ -2,21 +2,19 @@ import os
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow
 
-from module.model.person import Person
-from module.model.structs.name import Name
 from provider.person_provider import PersonProvider
 from provider.product_provider import ProductProvider
 from provider.purchase_provider import PurchaseProvider
 from view.main_window import MainWindow
 
-os.environ['QT_QPA_PLATFORM'] = 'xcb'
+os.environ['QT_QPA_PLATFORM'] = 'windows'
 
 from infrastructure.factories.database_factory import DatabaseFactory
 from infrastructure.factories.repository_factory import RepositoryFactory
-from module.services.strategy_service import StrategyService
-from module.services.person_service import PersonService
-from module.services.purchase_service import PurchaseService
-from module.strategies.by_person_strategy import ByPersonStrategy
+from Module.services.strategy_service import StrategyService
+from Module.services.person_service import PersonService
+from Module.services.purchase_service import PurchaseService
+from Module.strategies.by_person_strategy import ByPersonStrategy
 
 
 def main():

@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import (
     QMainWindow, QTabWidget, QWidget, QApplication, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QStackedWidget
 )
 from PyQt6.QtCore import Qt, QEvent
-from PyQt6.QtGui import QPalette, QColor
 
 from configuration.settings import app_name
 from view.persons_window import PersonsWindow

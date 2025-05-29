@@ -1,18 +1,18 @@
 import unittest
 from datetime import datetime
 
-from module.model.product import Product
-from module.model.person import Person
-from module.model.purchase import Purchase
-from module.model.structs.name import Name
+from Module.model.product import Product
+from Module.model.person import Person
+from Module.model.purchase import Purchase
+from Module.model.data.person_detail import PersonDetail
 
 
 class TestPurchase(unittest.TestCase):
     def setUp(self):
         self.product1 = Product("Starbucks", "Main Street", 20)
         self.product2 = Product("Costa", "Side Street", 15)
-        self.person1 = Person(Name("Alice", "Wonderland"), 3)
-        self.person2 = Person(Name("Bob", "La Blob"), 2)
+        self.person1 = Person(PersonDetail("Alice", "Wonderland"), 3)
+        self.person2 = Person(PersonDetail("Bob", "La Blob"), 2)
         self.date = datetime.now()
 
     def test_create_purchase_with_valid_data(self):

@@ -13,10 +13,10 @@ from infrastructure.database.SQlite.operations.SQLite_purchase_operations import
     insert_purchase, get_purchase_by_id, update_purchase, delete_purchase_by_id, get_all_purchases
 )
 from infrastructure.factories.database_factory import DatabaseFactory
-from module.model.product import Product
-from module.model.person import Person
-from module.model.purchase import Purchase
-from module.model.structs.name import Name
+from Module.model.product import Product
+from Module.model.person import Person
+from Module.model.purchase import Purchase
+from Module.model.data.person_detail import PersonDetail
 
 
 
@@ -69,7 +69,7 @@ class TestSQLiteDatabase(unittest.TestCase):
     # Person Operations Tests
     def test_person_crud(self):
         # Create & Read
-        person = Person(Name("John", "M", "Doe"), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("John", "M", "Doe"), 3, True, "avatar.jpg")
         person_id = insert_person(self.db_path, person)
         retrieved_person = get_person_by_id(self.db_path, person_id)
         self.assertEqual(retrieved_person.name.first_name, person.name.first_name)
@@ -88,15 +88,15 @@ class TestSQLiteDatabase(unittest.TestCase):
 
     def test_insert_person_with_invalid_days(self):
         with self.assertRaises(ValueError):
-            Person(Name("John", "M", "Doe"), 6)  # Invalid days_per_week
+            Person(PersonDetail("John", "M", "Doe"), 6)  # Invalid days_per_week
 
     def test_insert_person_with_invalid_name(self):
         with self.assertRaises(ValueError):
-            Person(Name("", "", ""), 3)  # Invalid name
+            Person(PersonDetail("", "", ""), 3)  # Invalid name
 
     def test_get_all_persons(self):
-        person1 = Person(Name("Alice", "Smith", ""), 3)
-        person2 = Person(Name("Bob", "Jones", ""), 5)
+        person1 = Person(PersonDetail("Alice", "Smith", ""), 3)
+        person2 = Person(PersonDetail("Bob", "Jones", ""), 5)
         insert_person(self.db_path, person1)
         insert_person(self.db_path, person2)
         persons = get_all_persons(self.db_path)
@@ -105,7 +105,7 @@ class TestSQLiteDatabase(unittest.TestCase):
     # Purchase Operations Tests
     def test_purchase_crud(self):
         # Setup
-        person = Person(Name("Buyer", "One", ""), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("Buyer", "One", ""), 3, True, "avatar.jpg")
         product = Product("Lavazza", "product Shop", 120, "product.jpg")
         person.id = insert_person(self.db_path, person)
         product.id = insert_product(self.db_path, product)
@@ -130,7 +130,7 @@ class TestSQLiteDatabase(unittest.TestCase):
 
 
     def test_get_all_purchases(self):
-        person = Person(Name("Buyer", "One", ""), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("Buyer", "One", ""), 3, True, "avatar.jpg")
         product = Product("Lavazza", "Shop", 120, "product.jpg")
         person.id = insert_person(self.db_path, person)
         product.id = insert_product(self.db_path, product)
@@ -155,7 +155,7 @@ class TestSQLiteDatabase(unittest.TestCase):
             update_product(self.db_path, product)  # product.id is None
 
         # Test Person update with non-existent ID
-        person = Person(Name("Test", "User", ""), 3, True, "avatar.jpg")
+        person = Person(PersonDetail("Test", "User", ""), 3, True, "avatar.jpg")
         person.id = 9999  # Non-existent ID
         with self.assertRaises(sqlite3.Error):
             update_person(self.db_path, person)

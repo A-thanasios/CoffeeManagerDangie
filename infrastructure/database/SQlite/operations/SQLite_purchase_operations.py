@@ -1,42 +1,67 @@
 import sqlite3
 from datetime import datetime
 
-from infrastructure.database.SQlite.operations.SQLite_product_operations import get_product_by_id
-from infrastructure.database.SQlite.operations.SQLite_person_operations import get_person_by_id
-from module.model.purchase import Purchase
+from Module import Purchase
+from Module.model.data.purchase_detail import PurchaseDetail
+
+from infrastructure.database.SQlite.operations.SQLite_product_operations import get_product_by_id, insert_product, \
+    get_products_by_purchase_id
+from infrastructure.database.SQlite.operations.SQLite_person_operations import get_person_by_id, \
+    get_persons_by_purchase_id
 
 
-# This module contains functions to interact with the purchase table in the database.
-
-# insert functions
 def insert_purchase(db_path, purchase):
     try:
-        with sqlite3.connect(db_path) as conn:
+        with (sqlite3.connect(db_path) as conn):
             conn.execute("PRAGMA foreign_keys = ON")
             cursor = conn.cursor()
 
-            # Insert purchase with ISO formatted date
-            cursor.execute('''
-                INSERT INTO purchase (name, date)
-                VALUES (?, datetime(?))
-            ''', (purchase.name, purchase.date.isoformat()))
+
+            cursor.execute('INSERT INTO purchase DEFAULT VALUES')
             purchase_id = cursor.lastrowid
 
-            # Insert relationships with persons
-            for person in purchase.persons:
-                cursor.execute('''
-                    INSERT INTO purchase_person (purchase_id, person_id)
-                    VALUES (?, ?)
-                ''', (purchase_id, person.id))
+            cursor.execute(
+                '''
+                INSERT INTO purchase_detail 
+                    (
+                        purchase_id,
+                        name,
+                        date
+                    )
+                VALUES (?, ?, datetime(?))
+                ''',
+                (
+                purchase_id,
+                purchase.name,
+                purchase.date.isoformat()
+            ))
 
-            # Insert relationships with products
-            for product in purchase.products:
-                cursor.execute('''
-                    INSERT INTO purchase_product (purchase_id, product_id)
-                    VALUES (?, ?)
-                ''', (purchase_id, product.id))
+            # Insert relationships with persons
+
+            settlement_values = [
+                (purchase_id, settlement.person.id, settlement.amount, settlement.is_paid)
+                for settlement in purchase.purchase_settlements
+            ]
+
+            cursor.executemany(
+                '''
+                INSERT INTO purchase_settlement 
+                    (
+                        purchase_id,
+                        person_id,
+                        amount,
+                        is_paid
+                    )
+                ''',
+                settlement_values
+            )
 
             conn.commit()
+
+            # Insert products that are part of the purchase
+            for product in purchase.products:
+                insert_product(db_path, product, purchase_id)
+
             return purchase_id
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
@@ -51,29 +76,35 @@ def get_purchase_by_id(db_path, purchase_id):
 
             # get purchase
             cursor.execute('''
-                SELECT id, name, date FROM purchase WHERE id = ?
-            ''', (purchase_id,))
-            purchase_row = cursor.fetchone()
+                SELECT 
+                    name,
+                    date,
+                from purchase_detail as pd
+                WHERE purchase_id = ?
+                '''), purchase_id
+            detail = cursor.fetchone()
 
-            if not purchase_row:
-                return None
-
-            # Convert date to datetime object
-            purchase_date = datetime.strptime(purchase_row[2], "%Y-%m-%d %H:%M:%S")
+            # get purchase_settlements
+            cursor.executemany(
+                '''
+                SELECT
+                    person_id,
+                    amount,
+                    is_paid
+                FROM purchase_settlement
+                WHERE purchase_id = ?
+                ''', purchase_id
+            )
+            settlements = cursor.fetchall()
 
             # get persons
-            cursor.execute('''
-                SELECT person_id FROM purchase_person WHERE purchase_id = ?
-            ''', (purchase_id,))
-            persons = [get_person_by_id(db_path, row[0]) for row in cursor.fetchall()]
+            persons = get_persons_by_purchase_id(db_path, purchase_id)
 
             # get products
-            cursor.execute('''
-                SELECT product_id FROM purchase_product WHERE purchase_id = ?
-            ''', (purchase_id,))
-            products = [get_product_by_id(db_path, row[0]) for row in cursor.fetchall()]
+            products = get_products_by_purchase_id(db_path, purchase_id)
 
-            return Purchase(purchase_row[1], persons, products, purchase_date, purchase_row[0])
+            return __create_purchase(purchase_id, detail, persons, products, settlements)
+
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
 
@@ -84,30 +115,15 @@ def get_purchases_by_person_id(db_path, person_id):
             cursor = conn.cursor()
 
             cursor.execute('''
-                SELECT p.id, p.name, p.date
-                FROM purchase AS p
-                JOIN purchase_person AS pp ON p.id = pp.purchase_id
-                WHERE pp.person_id = ?
+                SELECT id
+                FROM purchase_settlements
+                WHERE person_id = ?
             ''', (person_id,))
             rows = cursor.fetchall()
 
             purchases = []
             for row in rows:
-                purchase_id, purchase_name, purchase_date_str = row
-
-                cursor.execute('''
-                    SELECT product_id
-                    FROM purchase_product
-                    WHERE purchase_id = ?
-                ''', (purchase_id,))
-                product_ids = [r[0] for r in cursor.fetchall()]
-                products = [get_product_by_id(db_path, pid) for pid in product_ids]
-
-                person = get_person_by_id(db_path, person_id)
-
-                purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d %H:%M:%S")
-
-                purchases.append(Purchase(purchase_name, [person], products, purchase_date, purchase_id))
+                purchases.append(get_purchase_by_id(db_path, purchase_id=row[0]))
 
             return purchases
     except sqlite3.Error as error:
@@ -118,56 +134,20 @@ def get_all_purchases(db_path):
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT id, name, date
+                SELECT id
                 FROM purchase
             ''')
             rows = cursor.fetchall()
             purchases = []
             for row in rows:
-                purchases.append(get_purchase_by_id(db_path, row[0]))
+                purchases.append(get_purchase_by_id(db_path, purchase_id=row[0]))
             return purchases
+
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
 
 def update_purchase(db_path, purchase):
-    try:
-        with sqlite3.connect(db_path) as conn:
-            # Enable foreign key support
-            conn.execute("PRAGMA foreign_keys = ON")
-            cursor = conn.cursor()
-
-            # Update main purchase record with ISO formatted date
-            cursor.execute('''
-                UPDATE purchase
-                SET name = ?, date = datetime(?)
-                WHERE id = ?
-            ''', (purchase.name, purchase.date.isoformat(), purchase.id))
-
-            # Check if record exists
-            if cursor.rowcount == 0:
-                raise sqlite3.Error(f"No purchase found with ID {purchase.id}")
-
-            # Clear existing relationships
-            cursor.execute('DELETE FROM purchase_person WHERE purchase_id = ?', (purchase.id,))
-            cursor.execute('DELETE FROM purchase_product WHERE purchase_id = ?', (purchase.id,))
-
-            # Insert updated person relationships
-            for person in purchase.persons:
-                cursor.execute('''
-                    INSERT INTO purchase_person (purchase_id, person_id)
-                    VALUES (?, ?)
-                ''', (purchase.id, person.id))
-
-            # Insert updated product relationships
-            for product in purchase.products:
-                cursor.execute('''
-                    INSERT INTO purchase_product (purchase_id, product_id)
-                    VALUES (?, ?)
-                ''', (purchase.id, product.id))
-
-            conn.commit()
-    except sqlite3.Error as error:
-        raise sqlite3.Error (error)
+    raise Exception('Not implemented')
 
 def delete_purchase_by_id(db_path, purchase_id):
     try:
@@ -184,3 +164,9 @@ def delete_purchase_by_id(db_path, purchase_id):
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
 
+def __create_purchase(purchase_id, detail, persons, products, settlements):
+    # Convert date to datetime object
+    purchase_date = datetime.strptime(detail[2], "%Y-%m-%d %H:%M:%S")
+    detail = PurchaseDetail(detail[1], purchase_date)
+
+    return Purchase(detail, persons, products, settlements, purchase_id)

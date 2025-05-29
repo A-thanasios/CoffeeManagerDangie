@@ -1,5 +1,5 @@
-from module.interfaces.crud_service import CRUDService
-from module.model.product import Product
+from Module.interfaces.crud_service import CRUDService
+from Module.model.product import Product
 
 
 class ProductService(CRUDService):

@@ -1,11 +1,11 @@
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock
-from module.model.person import Person
-from module.model.purchase import Purchase
-from module.model.product import Product
-from module.model.structs.name import Name
-from module.services.strategy_service import StrategyService
+from Module.model.person import Person
+from Module.model.purchase import Purchase
+from Module.model.product import Product
+from Module.model.data.person_detail import PersonDetail
+from Module.services.strategy_service import StrategyService
 
 class TestStrategyService(unittest.TestCase):
     def setUp(self):
@@ -20,9 +20,9 @@ class TestStrategyService(unittest.TestCase):
             self.by_person_strategy
         )
 
-        self.person = Person(Name("John", "Bin"), days_per_week=5)
+        self.person = Person(PersonDetail("John", "Bin"), days_per_week=5)
         self.person.id = 1
-        self.person2 = Person(Name("Jane", "Doe"), days_per_week=3)
+        self.person2 = Person(PersonDetail("Jane", "Doe"), days_per_week=3)
         self.person2.id = 2
         self.product1 = Product("Product1", "Adresa1", 100)
         self.product2 = Product("Product2", "Adresa2", 200)

@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QPixmap, QColor, QMouseEvent, QPainter, QBrush
 
-from module.dto.person_dto import PersonDTO
+from Module.dto.person_dto import PersonDTO
 from provider.person_provider import PersonProvider
 from view.sliders import TitledSlider
 

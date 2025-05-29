@@ -1,7 +1,7 @@
-from module.dto.person_dto import PersonDTO
-from module.interfaces.Provider import Provider
-from module.model.person import Person
-from module.model.structs.name import Name
+from Module.dto.person_dto import PersonDTO
+from Module.interfaces.Provider import Provider
+from Module.model.person import Person
+from Module.model.data.person_detail import PersonDetail
 
 
 class PersonProvider(Provider):
@@ -41,7 +41,7 @@ class PersonProvider(Provider):
             )
 
     def create(self, new_person: PersonDTO) -> None:
-        name = Name(new_person.first_name, new_person.last_name, new_person.middle_name)
+        name = PersonDetail(new_person.first_name, new_person.last_name, new_person.middle_name)
         person = Person(name, new_person.days_per_week, new_person.is_buying, new_person.img)
         self.person_service.add(person)
 

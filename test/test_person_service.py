@@ -1,10 +1,10 @@
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock
-from module.model.person import Person
-from module.model.purchase import Purchase
-from module.model.structs.name import Name
-from module.services.person_service import PersonService
+from Module.model.person import Person
+from Module.model.purchase import Purchase
+from Module.model.data.person_detail import PersonDetail
+from Module.services.person_service import PersonService
 
 class TestPersonService(unittest.TestCase):
     def setUp(self):
@@ -12,9 +12,9 @@ class TestPersonService(unittest.TestCase):
         self.purchase_service = MagicMock()
         self.person_service = PersonService(self.repo, self.purchase_service)
 
-        self.person = Person(Name("John", "Bin"), 5)
+        self.person = Person(PersonDetail("John", "Bin"), 5)
         self.person.id = 1
-        self.person2 = Person(Name("Jane", "Doe"), 3)
+        self.person2 = Person(PersonDetail("Jane", "Doe"), 3)
         self.person2.id = 2
 
     def test_add_person_success(self):

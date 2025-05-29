@@ -2,18 +2,18 @@
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock
-from module.model.person import Person
-from module.model.purchase import Purchase
-from module.model.product import Product
-from module.model.structs.name import Name
-from module.services.purchase_service import PurchaseService
+from Module.model.person import Person
+from Module.model.purchase import Purchase
+from Module.model.product import Product
+from Module.model.data.person_detail import PersonDetail
+from Module.services.purchase_service import PurchaseService
 
 class TestPurchaseService(unittest.TestCase):
     def setUp(self):
         self.repo = MagicMock()
         self.purchase_service = PurchaseService(self.repo)
 
-        self.person = Person(Name("John", "Bin"), 5)
+        self.person = Person(PersonDetail("John", "Bin"), 5)
         self.person.id = 1
         self.product = Product("Product1", "Adresa1", 100)
         self.purchase = Purchase("Purchase1", persons=[self.person], products=[self.product], date=datetime.now())
