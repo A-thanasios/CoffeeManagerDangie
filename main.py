@@ -1,20 +1,21 @@
 import os
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow
+from PyQt6.QtWidgets import QApplication
 
-from provider.person_provider import PersonProvider
-from provider.product_provider import ProductProvider
-from provider.purchase_provider import PurchaseProvider
-from view.main_window import MainWindow
+import Configuration.settings
+#from MVP.Provider.person_provider import PersonProvider
+#from MVP.Provider.product_provider import ProductProvider
+#from MVP.Provider.purchase_provider import PurchaseProvider
+#from MVP.View.main_window import MainWindow
 
-os.environ['QT_QPA_PLATFORM'] = 'windows'
+os.environ['QT_QPA_PLATFORM'] = Configuration.settings.environ_platform
 
-from infrastructure.factories.database_factory import DatabaseFactory
-from infrastructure.factories.repository_factory import RepositoryFactory
-from Module.services.strategy_service import StrategyService
-from Module.services.person_service import PersonService
-from Module.services.purchase_service import PurchaseService
-from Module.strategies.by_person_strategy import ByPersonStrategy
+from Infrastructure.factories.database_factory import DatabaseFactory
+'''from Infrastructure.factories.repository_factory import RepositoryFactory
+from MVP.Module.services.strategy_service import StrategyService
+from MVP.Module.services.person_service import PersonService
+from MVP.Module.services.purchase_service import PurchaseService
+from MVP.Module.strategies.by_person_strategy import ByPersonStrategy'''
 
 
 def main():

@@ -16,9 +16,9 @@ ENV/
 Thumbs.db
 
 # database
-infrastructure/database/product_manager.db
-infrastructure/database/product_manager.db-journal
-infrastructure/database/product_manager.db-shm
+Infrastructure/database/product_manager.db
+Infrastructure/database/product_manager.db-journal
+Infrastructure/database/product_manager.db-shm
 databaseproduct_manager.db-wal
 
 # docs
