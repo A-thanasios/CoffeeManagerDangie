@@ -1,12 +1,12 @@
 import unittest
 from datetime import datetime
 
-from MVP.Module.model.product import Product
-from MVP.Module.model.person import Person
-from MVP.Module.model.purchase import Purchase
-from MVP.Module.model.data.person_detail import PersonDetail
-from MVP.Module.model.data.purchase_detail import PurchaseDetail
-from MVP.Module.model.data.purchase_settlement import PurchaseSettlement
+from MVP_DEPRECATED.Module.Model.product import Product
+from MVP_DEPRECATED.Module.Model.person import Person
+from MVP_DEPRECATED.Module.Model.purchase import Purchase
+from MVP_DEPRECATED.Module.Model.data.person_detail import PersonDetail
+from MVP_DEPRECATED.Module.Model.data.purchase_detail import PurchaseDetail
+from MVP_DEPRECATED.Module.Model.data.purchase_settlement import PurchaseSettlement
 
 
 class TestPurchase(unittest.TestCase):
@@ -58,10 +58,10 @@ class TestPurchase(unittest.TestCase):
 
     def test_valid_initialization(self):
         """Test initialization with valid data"""
-        self.assertEqual(self.valid_purchase.purchase_detail, self.purchase_detail)
+        self.assertEqual(self.valid_purchase.purchase_detail_dict, self.purchase_detail)
         self.assertEqual(self.valid_purchase.persons, [self.person])
         self.assertEqual(self.valid_purchase.products, [self.product])
-        self.assertEqual(self.valid_purchase.purchase_settlements, [self.settlement])
+        self.assertEqual(self.valid_purchase.purchase_settlements_dict, [self.settlement])
         self.assertIsNone(self.valid_purchase.id)
 
     def test_invalid_purchase_detail(self):

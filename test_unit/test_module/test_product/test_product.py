@@ -1,5 +1,5 @@
 import unittest
-from MVP.Module.model.product import Product
+from MVP_DEPRECATED.Module.Model.product import Product
 
 
 class TestProduct(unittest.TestCase):

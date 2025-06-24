@@ -2,11 +2,11 @@
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock
-from MVP.Module.model.person import Person
-from MVP.Module import Purchase
-from MVP.Module.model.product import Product
-from MVP.Module import PersonDetail
-from MVP.Module.services.purchase_service import PurchaseService
+from MVP_DEPRECATED.Module.Model.person import Person
+from MVP_DEPRECATED.Module import Purchase
+from MVP_DEPRECATED.Module.Model.product import Product
+from MVP_DEPRECATED.Module import PersonDetail
+from MVP_DEPRECATED.Module.services.purchase_service import PurchaseService
 
 class TestPurchaseService(unittest.TestCase):
     def setUp(self):

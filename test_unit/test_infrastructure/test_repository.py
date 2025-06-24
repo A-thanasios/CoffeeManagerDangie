@@ -6,13 +6,13 @@ from datetime import datetime
 
 
 from Infrastructure.factories.database_factory import DatabaseFactory
-from Infrastructure.repositories.person_repository import SQLitePersonRepository
+from Infrastructure.repositories.SQLite_person_repository import SQLitePersonRepository
 from Infrastructure.repositories.SQLite_product_repository import SQLiteProductRepository
 from Infrastructure.repositories.SQLite_purchase_repository import SQLitePurchaseRepository
-from MVP.Module.model.person import Person
-from MVP.Module.model.product import Product
-from MVP.Module import Purchase
-from MVP.Module import PersonDetail
+from MVP_DEPRECATED.Module.Model.person import Person
+from MVP_DEPRECATED.Module.Model.product import Product
+from MVP_DEPRECATED.Module import Purchase
+from MVP_DEPRECATED.Module import PersonDetail
 
 
 

@@ -1,12 +1,13 @@
 import sqlite3
 from datetime import datetime
 
-from MVP.Module import Purchase, PurchaseSettlement
-from MVP.Module import PurchaseDetail
+from Module import Purchase
+from Module.Model.data.purchase_detail import PurchaseDetail
+from Module.Model.data.purchase_settlement import PurchaseSettlement
 
 from Infrastructure.database.SQlite.operations.SQLite_product_operations import insert_product, \
-    get_products_by_purchase_id
-from Infrastructure.database.SQlite.operations.SQLite_person_operations import SQLitePersonOperations
+    select_products_by_purchase_id
+from Infrastructure.database.SQlite.operations.SQLite_person_operations import select_persons_by_purchase_id
 
 
 def insert_purchase(db_path, purchase):
@@ -31,8 +32,8 @@ def insert_purchase(db_path, purchase):
                 ''',
                 (
                 purchase_id,
-                purchase.purchase_detail.name,
-                purchase.purchase_detail.date.isoformat()
+                purchase.detail.name,
+                purchase.detail.date.isoformat()
             ))
 
             # Insert relationships with persons
@@ -69,7 +70,7 @@ def insert_purchase(db_path, purchase):
 
 # get functions
 
-def get_purchase_by_id(db_path, purchase_id):
+def select_purchase_by_id(db_path, purchase_id):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -103,43 +104,43 @@ def get_purchase_by_id(db_path, purchase_id):
             settlements_raw = cursor.fetchall()
 
             # get persons
-            persons = SQLitePersonOperations.get_persons_by_purchase_id(db_path, purchase_id)
+            persons = select_persons_by_purchase_id(db_path, purchase_id)
             settlements = []
             for settlement in settlements_raw:
                 person_id, amount, is_paid = settlement
                 person = next((p for p in persons if p.id == person_id), None)
                 if person:
-                    settlements.append(PurchaseSettlement(person, amount, is_paid))
+                    settlements.append(tuple([person, amount, bool(is_paid)]))
             # get products
-            products = get_products_by_purchase_id(db_path, purchase_id)
+            products = select_products_by_purchase_id(db_path, purchase_id)
 
-            return __create_purchase(purchase_id, detail, persons, products, settlements)
+            return __create_purchase(purchase_id, detail, products, settlements)
 
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
 
 
-def get_purchases_by_person_id(db_path, person_id):
+def select_purchases_by_person_id(db_path, person_id):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
 
             cursor.execute('''
-                SELECT id
-                FROM purchase_settlements
+                SELECT purchase_id
+                FROM purchase_settlement
                 WHERE person_id = ?
             ''', (person_id,))
             rows = cursor.fetchall()
 
             purchases = []
             for row in rows:
-                purchases.append(get_purchase_by_id(db_path, purchase_id=row[0]))
+                purchases.append(select_purchase_by_id(db_path, purchase_id=row[0]))
 
             return purchases
     except sqlite3.Error as error:
         raise sqlite3.Error(error)
 
-def get_all_purchases(db_path):
+def select_all_purchases(db_path):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -150,7 +151,7 @@ def get_all_purchases(db_path):
             rows = cursor.fetchall()
             purchases = []
             for row in rows:
-                purchases.append(get_purchase_by_id(db_path, purchase_id=row[0]))
+                purchases.append(select_purchase_by_id(db_path, purchase_id=row[0]))
             return purchases
 
     except sqlite3.Error as error:
@@ -175,10 +176,13 @@ def delete_purchase_by_id(db_path, purchase_id):
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
 
-def __create_purchase(purchase_id, detail, persons, products, settlements):
+def __create_purchase(purchase_id, detail, products, settlements):
     # Convert date to datetime object
     purchase_date = datetime.strptime(detail[1], "%Y-%m-%d %H:%M:%S")
-    detail = PurchaseDetail(detail[0], purchase_date)
 
 
-    return Purchase(detail, persons, products, settlements, purchase_id)
+
+    return Purchase(name=detail[0], date=purchase_date,
+                    purchase_settlements=settlements,
+                    products=products,
+                    db_id=purchase_id)

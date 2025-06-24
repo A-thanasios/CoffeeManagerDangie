@@ -1,9 +1,9 @@
 import unittest
-from MVP.Module.model.person import Person
-from MVP.Module.model.product import Product
-from MVP.Module import Purchase
-from MVP.Module import PersonDetail
-from MVP.Module.strategies.by_person_strategy import ByPersonStrategy
+from MVP_DEPRECATED.Module.Model.person import Person
+from MVP_DEPRECATED.Module.Model.product import Product
+from MVP_DEPRECATED.Module import Purchase
+from MVP_DEPRECATED.Module import PersonDetail
+from MVP_DEPRECATED.Module.strategies.by_person_strategy import ByPersonStrategy
 from datetime import datetime
 
 

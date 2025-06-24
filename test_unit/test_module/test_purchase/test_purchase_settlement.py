@@ -1,7 +1,7 @@
 import unittest
-from MVP.Module.model.person import Person
-from MVP.Module.model.data.person_detail import PersonDetail
-from MVP.Module.model.data.purchase_settlement import PurchaseSettlement
+from MVP_DEPRECATED.Module.Model.person import Person
+from MVP_DEPRECATED.Module.Model.data.person_detail import PersonDetail
+from MVP_DEPRECATED.Module.Model.data.purchase_settlement import PurchaseSettlement
 
 
 class TestPurchaseSettlement(unittest.TestCase):

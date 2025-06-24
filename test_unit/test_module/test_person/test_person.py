@@ -1,6 +1,6 @@
 import unittest
-from MVP.Module.model.person import Person
-from MVP.Module.model.data.person_detail import PersonDetail
+from MVP_DEPRECATED.Module.Model.person import Person
+from MVP_DEPRECATED.Module.Model.data.person_detail import PersonDetail
 
 class TestPerson(unittest.TestCase):
     def setUp(self):
@@ -14,7 +14,7 @@ class TestPerson(unittest.TestCase):
 
     def test_initialization(self):
         """Test proper initialization"""
-        self.assertEqual(self.test_person.person_detail, self.test_person_detail)
+        self.assertEqual(self.test_person.person_detail_dict, self.test_person_detail)
         self.assertIsNone(self.test_person.id)
 
     def test_initialization_with_id(self):
@@ -40,7 +40,7 @@ class TestPerson(unittest.TestCase):
 
     def test_person_detail_property(self):
         """Test person_detail property"""
-        self.assertEqual(self.test_person.person_detail, self.test_person_detail)
+        self.assertEqual(self.test_person.person_detail_dict, self.test_person_detail)
 
 if __name__ == '__main__':
     unittest.main()

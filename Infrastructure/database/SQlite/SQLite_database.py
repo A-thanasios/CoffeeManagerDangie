@@ -1,7 +1,7 @@
 import os
 import sqlite3
 
-from MVP.Module.interfaces import Database
+from Module.Interfaces import Database
 
 
 
@@ -90,6 +90,7 @@ class SQLiteDatabase(Database):
                    ''')
 
                 conn.commit()
+                
         except sqlite3.Error as error:
             self.__path = ''
             raise Exception(f"Error initializing database: {error}")

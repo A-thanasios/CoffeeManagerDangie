@@ -3,19 +3,16 @@ import sys
 from PyQt6.QtWidgets import QApplication
 
 import Configuration.settings
-#from MVP.Provider.person_provider import PersonProvider
-#from MVP.Provider.product_provider import ProductProvider
-#from MVP.Provider.purchase_provider import PurchaseProvider
-#from MVP.View.main_window import MainWindow
+
+from Infrastructure import DatabaseFactory, RepositoryFactory
+from Module import PersonService, PurchaseService
+from MVP_DEPRECATED.Provider import PersonProvider, PurchaseProvider, ProductProvider
+from MVP_DEPRECATED.Provider.dto.person_dto import PersonDTO
 
 os.environ['QT_QPA_PLATFORM'] = Configuration.settings.environ_platform
 
-from Infrastructure.factories.database_factory import DatabaseFactory
-'''from Infrastructure.factories.repository_factory import RepositoryFactory
-from MVP.Module.services.strategy_service import StrategyService
-from MVP.Module.services.person_service import PersonService
-from MVP.Module.services.purchase_service import PurchaseService
-from MVP.Module.strategies.by_person_strategy import ByPersonStrategy'''
+
+
 
 
 def main():
@@ -31,7 +28,7 @@ def main():
     # Initialize the services
     purchase_service = PurchaseService(purchase_repository)
     person_service = PersonService(person_repository, purchase_service)
-    app_service = StrategyService(person_service, purchase_service, product_repository, ByPersonStrategy())
+    #app_service = StrategyService(person_service, purchase_service, product_repository, ByPersonStrategy())
 
     # Initialize the providers
     person_provider = PersonProvider(person_service)
@@ -39,14 +36,17 @@ def main():
     product_provider = ProductProvider(product_repository)
 
 
-    # Initialize the gui
+    #person_provider.add(PersonDTO(id= -1, name='Petr', e_mail='sis@oto.cz', days_per_week=5, is_buying=True))
+    print(person_provider.get())
+
+    '''# Initialize the gui
     app = QApplication(sys.argv)
 
     window = MainWindow(person_provider, purchase_provider, product_provider, app_service)
 
     window.show()
 
-    app.exec()
+    app.exec()'''
 
 
 if __name__ == "__main__":

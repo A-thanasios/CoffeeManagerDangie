@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime
-from MVP.Module.model.data.purchase_detail import PurchaseDetail
+from MVP_DEPRECATED.Module.Model.data.purchase_detail import PurchaseDetail
 
 
 class TestPurchaseDetail(unittest.TestCase):

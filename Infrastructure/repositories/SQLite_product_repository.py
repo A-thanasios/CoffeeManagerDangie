@@ -1,33 +1,39 @@
-from MVP.Module.interfaces.repository import Repository
-
-from Infrastructure.database.SQlite.operations.SQLite_product_operations import (
-    insert_product,
-    get_product_by_id,
-
-    get_all_products,
-    delete_product_by_id,
-    update_product,
-)
+from Module.Interfaces import Repository
+from Infrastructure.database.SQlite.operations import SQLite_product_operations
+from Module import Product
 
 
 class SQLiteProductRepository(Repository):
     def __init__(self, db_path):
         self.db_path = db_path
+        self.product_operations = SQLite_product_operations
 
-    def create(self, product):
-        return insert_product(self.db_path, product)
+    def create(self, product: Product, purchase_id: int) -> int:
+        if not isinstance(product, Product):
+            raise TypeError(f"Expected a Product instance, got {type(product).__name__}")
+        if not isinstance(purchase_id, int):
+            raise TypeError(f"Expected an integer for purchase_id, got {type(purchase_id).__name__}")
+        return self.product_operations.insert_product(self.db_path, product, purchase_id)
 
-    def get_by_id(self, product_id):
-        return get_product_by_id(self.db_path, product_id)
+    def read_by_id(self, product_id: int) -> Product | None:
+        if not isinstance(product_id, int):
+            raise TypeError(f"Expected an integer for product_id, got {type(product_id).__name__}")
+        return self.product_operations.select_product_by_id(self.db_path, product_id)
 
-    def get_by_other_id(self, person_id):
-        pass
+    def read_by_other_id(self, purchase_id: int) -> list[Product] | None:
+        if not isinstance(purchase_id, int):
+            raise TypeError(f"Expected an integer for purchase_id, got {type(purchase_id).__name__}")
+        return self.product_operations.select_products_by_purchase_id(self.db_path, purchase_id)
 
-    def get_all(self):
-        return get_all_products(self.db_path)
+    def read_all(self) -> list[Product] | None:
+        return self.product_operations.select_all_products(self.db_path)
 
-    def delete_by_id(self, product_id):
-        return delete_product_by_id(self.db_path, product_id)
+    def update(self, product: Product) -> bool:
+        if not isinstance(product, Product):
+            raise TypeError(f"Expected a Product instance, got {type(product).__name__}")
+        return self.product_operations.update_product(self.db_path, product)
 
-    def update(self, product):
-        return update_product(self.db_path, product)
+    def delete_by_id(self, product_id: int) -> bool:
+        if not isinstance(product_id, int):
+            raise TypeError(f"Expected an integer for product_id, got {type(product_id).__name__}")
+        return self.product_operations.delete_product_by_id(self.db_path, product_id)

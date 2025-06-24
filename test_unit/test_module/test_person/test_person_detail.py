@@ -1,5 +1,5 @@
 import unittest
-from MVP.Module.model.data.person_detail import PersonDetail
+from MVP_DEPRECATED.Module.Model.data.person_detail import PersonDetail
 
 class TestPersonDetail(unittest.TestCase):
     def test_valid_initialization(self):

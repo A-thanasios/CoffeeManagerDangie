@@ -1,10 +1,10 @@
 import unittest
 from datetime import datetime
 from unittest.mock import MagicMock
-from MVP.Module.model.person import Person
-from MVP.Module import Purchase
-from MVP.Module import PersonDetail
-from MVP.Module import PersonService
+from MVP_DEPRECATED.Module.Model.person import Person
+from MVP_DEPRECATED.Module import Purchase
+from MVP_DEPRECATED.Module import PersonDetail
+from MVP_DEPRECATED.Module import PersonService
 
 class TestPersonService(unittest.TestCase):
     def setUp(self):
@@ -69,7 +69,7 @@ class TestPersonService(unittest.TestCase):
         mock_purchase = Purchase("TestPurchase", [self.person], [], datetime.now())
         self.purchase_service.get.return_value = mock_purchase
 
-        result = self.person_service.get_all_purchases(self.person.id)
+        result = self.person_service.select_all_purchases(self.person.id)
         self.assertEqual(result, [mock_purchase])
         self.purchase_service.get_all_persons.assert_called_once_with(self.person.id)
         self.purchase_service.get.assert_called_once_with(self.person)
@@ -77,7 +77,7 @@ class TestPersonService(unittest.TestCase):
     def test_get_all_purchases_no_persons(self):
         self.purchase_service.get_all_persons.return_value = []
         with self.assertRaises(ValueError) as context:
-            self.person_service.get_all_purchases(self.person.id)
+            self.person_service.select_all_purchases(self.person.id)
         self.assertEqual(str(context.exception), "No persons found")
 
 

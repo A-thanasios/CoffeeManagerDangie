@@ -1,10 +1,10 @@
 import sqlite3
 from sys import implementation
 
-from MVP.Module import Product
+from Module import Product
 
 
-def insert_product(db_path: str, product: Product, purchase_id: int):
+def insert_product(db_path: str, product: Product, purchase_id: int) :
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -25,10 +25,11 @@ def insert_product(db_path: str, product: Product, purchase_id: int):
             conn.commit()
             cursor.close()
             return product_id
+
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
 
-def get_product_by_id(db_path, product_id):
+def select_product_by_id(db_path, product_id):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -40,7 +41,7 @@ def get_product_by_id(db_path, product_id):
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
 
-def get_products_by_purchase_id(db_path: str, purchase_id: int):
+def select_products_by_purchase_id(db_path: str, purchase_id: int):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
@@ -51,7 +52,7 @@ def get_products_by_purchase_id(db_path: str, purchase_id: int):
         raise sqlite3.Error (error)
 
 
-def get_all_products(db_path: str):
+def select_all_products(db_path: str):
     try:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
