@@ -4,22 +4,24 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QEvent
 
 from Configuration.settings import app_name
-from View.persons_window import PersonsWindow
-from View.purchase_window import PurchaseWindow
+from Module.services.person_service import PersonService
+from Module.services.purchase_service import PurchaseService
+from View.persons.persons_window import PersonsWindow
+from View.purchase.purchase_window import PurchaseWindow
 from View.title_bar import TitleBar
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, person_provider, purchase_provider, product_provider, app_service):
+    def __init__(self, person_service: PersonService, purchase_service: PurchaseService):
         super().__init__()
-        self.person_provider = person_provider
-        self.purchase_provider = purchase_provider
-        self.product_provider = product_provider
-        self.app_service = app_service
+        self.person_service = person_service
+        self.purchase_service = purchase_service
+        self.product_provider = None
+        self.app_service = None
 
         self.title_bar = TitleBar(self)
-        self.purchase_window = PurchaseWindow(self.person_provider, self.purchase_provider, self.product_provider, self.app_service)
-        self.persons_window = PersonsWindow(self.person_provider)
+        self.purchase_window = PurchaseWindow(self.person_service, self.purchase_service, self.product_provider, self.app_service)
+        self.persons_window = PersonsWindow(self.person_service)
 
         self.setWindowTitle(app_name)
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
@@ -40,8 +42,8 @@ class MainWindow(QMainWindow):
         self.tabs.setTabsClosable(False)  # Hide the body of the tabs
 
         # Add tabs
-        self.tabs.addTab(self.purchase_window, "Purchases")
         self.tabs.addTab(self.persons_window, "Persons")
+        self.tabs.addTab(self.purchase_window, "Purchases")
 
 
         # Add the tab widget to the main layout

@@ -41,3 +41,6 @@ class Person:
 
     __eq__ = lambda self, other: (isinstance(other, Person)
                                   and self.__person_detail.name == other.__person_detail.name)
+
+    def __str__(self):
+        return f'{self.__id}: {self.__person_detail.name}'

@@ -100,7 +100,7 @@ def update_person(db_path: str, person: Person) -> bool | sqlite3.Error:
                     e_mail = ?, 
                     days_per_week = ?, 
                     is_buying = ?
-                WHERE id = ?
+                WHERE person_id = ?
             ''', (
                 person.detail.name,
                 person.detail.e_mail,
@@ -124,6 +124,7 @@ def delete_person_by_id(db_path: str, person_id: int) -> bool | sqlite3.Error:
             cursor = conn.cursor()
 
             # Check if the person have any purchases
+            cursor.execute('PRAGMA foreign_keys = ON;')
             cursor.execute('''
                            SELECT purchase_id
                            FROM purchase_settlement

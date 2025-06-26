@@ -32,8 +32,7 @@ class SQLiteDatabase(Database):
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS person_detail
                     (
-                        id              INTEGER PRIMARY KEY,
-                        person_id       INTEGER,
+                        person_id       INTEGER PRIMARY KEY,
                         name            TEXT NOT NULL CHECK (length(name) > 0),
                         e_mail          TEXT CHECK (e_mail LIKE '%_@_%._%'),
                         days_per_week   INTEGER NOT NULL CHECK (days_per_week >= 0 AND days_per_week <= 5),

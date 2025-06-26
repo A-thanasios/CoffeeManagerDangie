@@ -1,5 +1,5 @@
 from MVP_DEPRECATED.Provider.dto.person_dto import PersonDTO
-from MVP_DEPRECATED.Module.Interfaces import Provider
+from Module.Interfaces import Provider
 
 
 class PersonProvider(Provider):
