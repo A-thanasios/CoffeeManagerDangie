@@ -31,8 +31,8 @@ def main():
     product_service = ProductService(product_repository)
     strategy_service = StrategyExecutor()
     purchase_service = PurchaseService(purchase_repository,
-                                       person_service,
                                        product_service,
+                                       person_service,
                                        strategy_service)
 
 

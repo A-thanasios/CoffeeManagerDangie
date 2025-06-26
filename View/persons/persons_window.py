@@ -7,10 +7,7 @@ from PyQt6.QtWidgets import (
     QCheckBox, QSlider, QTableWidget, QTableWidgetItem,
 )
 
-
 from Module.services.person_service import PersonService
-
-
 
 class PersonsWindow(QWidget):
     def __init__(self, person_service: PersonService ):
@@ -37,6 +34,7 @@ class PersonsWindow(QWidget):
         self.persons_table.itemSelectionChanged.connect(self.focus_person_row)
         self.persons_table.cellChanged.connect(self.edit_person)
         self.main_layout.addWidget(self.persons_table)
+
         self.fill_list()
 
         # Control panel
@@ -79,10 +77,11 @@ class PersonsWindow(QWidget):
                 self.persons_table.setCellWidget(i, 3, slider)
                 self.persons_table.setCellWidget(i, 4, check_box)
 
+
+
         self.is_loading = False
 
-    @staticmethod
-    def create_slider(person):
+    def create_slider(self, person):
         slider = QSlider(Qt.Orientation.Horizontal)
         slider.setMinimum(1)
         slider.setMaximum(5)
@@ -90,18 +89,32 @@ class PersonsWindow(QWidget):
         slider.setSingleStep(1)
         slider.setTickInterval(1)
         slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        slider.sliderReleased.connect(self.on_slider_change)
         return slider
 
-    @staticmethod
-    def create_checkbox(person):
+    def on_slider_change(self):
+        slider = self.sender()
+        self.edit_person(self.persons_table.indexAt(slider.pos()).row(), 3)
+
+
+    def create_checkbox(self, person):
         container = QWidget()
         checkbox_buying = QCheckBox()
         layout = QHBoxLayout(container)
         checkbox_buying.setChecked(person['is_buying'])
         layout.addWidget(checkbox_buying)
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(0, 0, 6, 0)
+        container.setMinimumWidth(checkbox_buying.sizeHint().width() + 8)
+        checkbox_buying.stateChanged.connect(self.on_checkbox_change)
+        container.checkbox = checkbox_buying
         return container
+
+    def on_checkbox_change(self, state):
+        checkbox = self.sender()
+        pos = checkbox.mapTo(self.persons_table.viewport(), checkbox.rect().center())
+        row = self.persons_table.indexAt(pos).row()
+        self.edit_person(row, 4)
 
     def focus_person_row(self):
         self.selected_person_row.clear()
@@ -145,11 +158,9 @@ class PersonsWindow(QWidget):
         if self.is_loading:
             return
         try:
-            if not self.persons_table.item(row, column).text():
-                return
-
             person_id = int(self.persons_table.item(row, 0).text())
-
+            print(row)
+            print(column)
             match column:
                 case 1:
                     item = self.persons_table.item(row, column).text().strip()
@@ -160,16 +171,17 @@ class PersonsWindow(QWidget):
                     self.person_service.update(person_id=person_id,
                                                e_mail=item)
                 case 3:
-                    item = int(self.persons_table.item(row, column).text())
+                    item = self.persons_table.cellWidget(row, column).value()
+                    print(item)
                     self.person_service.update(person_id=person_id,
                                                days_per_week=item)
                 case 4:
-                    item = bool(self.persons_table.item(row, column).text())
+                    item = bool(self.persons_table.cellWidget(row, column).checkbox.isChecked())
+                    print(item)
                     self.person_service.update(person_id=person_id,
                                                is_buying=item)
                 case _:
                     return
 
-            self.fill_list()
         except Exception as e:
             print(f"Error editing person: {e}")

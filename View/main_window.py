@@ -16,11 +16,9 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.person_service = person_service
         self.purchase_service = purchase_service
-        self.product_provider = None
-        self.app_service = None
 
         self.title_bar = TitleBar(self)
-        self.purchase_window = PurchaseWindow(self.person_service, self.purchase_service, self.product_provider, self.app_service)
+        self.purchase_window = PurchaseWindow(self.person_service, self.purchase_service)
         self.persons_window = PersonsWindow(self.person_service)
 
         self.setWindowTitle(app_name)
@@ -42,8 +40,8 @@ class MainWindow(QMainWindow):
         self.tabs.setTabsClosable(False)  # Hide the body of the tabs
 
         # Add tabs
-        self.tabs.addTab(self.persons_window, "Persons")
         self.tabs.addTab(self.purchase_window, "Purchases")
+        self.tabs.addTab(self.persons_window, "Persons")
 
 
         # Add the tab widget to the main layout

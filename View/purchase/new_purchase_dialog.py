@@ -2,6 +2,9 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QDialog, QLabel, QLineEdit, QTableWidget, QAbstractItemView, QTableWidgetItem, QWidget, \
     QHBoxLayout, QCheckBox, QPushButton, QVBoxLayout
 
+from View.persons import persons_window
+from View.persons.persons_window import PersonsWindow
+
 
 class NewPurchaseDialog(QDialog):
     def __init__(self, persons, parent=None):
@@ -11,7 +14,7 @@ class NewPurchaseDialog(QDialog):
         self.setWindowModality(Qt.WindowModality.WindowModal)
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
 
-        self.persons = persons  # List of available persons
+        self.persons = persons
         self.selected_persons = {}
 
         # Purchase Name Input
@@ -28,17 +31,19 @@ class NewPurchaseDialog(QDialog):
 
         self.persons_table.setRowCount(len(self.persons))
         self.persons_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.persons_table.setEnabled(False)
+        self.persons_table.edit
 
 
 
 
-        for row, person in enumerate(self.persons):
-            name_item = QTableWidgetItem(person.first_name)
+        for row, (person_id, person) in enumerate(self.persons.items()):
+            name_item = QTableWidgetItem(person['name'])
             name_item.setData(Qt.ItemDataRole.UserRole, person)
             name_item.setFlags(name_item.flags() & ~Qt.ItemFlag.ItemIsUserCheckable)
             self.persons_table.setItem(row, 0, name_item)
 
-            days_item = QTableWidgetItem(str(person.days_per_week))
+            days_item = QTableWidgetItem(str(person['days_per_week']))
             days_item.setFlags(days_item.flags() & ~Qt.ItemFlag.ItemIsUserCheckable)
             days_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.persons_table.setItem(row, 1, days_item)
@@ -50,7 +55,7 @@ class NewPurchaseDialog(QDialog):
 
             # Create the QCheckBox
             check_item = QCheckBox()
-            check_item.setCheckState(Qt.CheckState.Checked if person.is_buying else Qt.CheckState.Unchecked)
+            check_item.setCheckState(Qt.CheckState.Checked if person['is_buying'] else Qt.CheckState.Unchecked)
 
             # Add the checkbox to the layout
             layout.addWidget(check_item)
@@ -129,15 +134,15 @@ class NewPurchaseDialog(QDialog):
         checked_persons = []
         for row in range(self.persons_table.rowCount()):
             person = self.persons_table.item(row, 0).data(Qt.ItemDataRole.UserRole)
-            if person.is_buying:
-                    checked_persons.append(person)
+            if person['is_buying']:
+                    checked_persons.append(person['id'])
 
         checked_products = []
         for row in range(self.product_table.rowCount()):
-            checked_products.append(ProductDTO(id=row,
-                                               name=self.product_table.item(row, 0).text(),
-                                               shop=self.product_table.item(row, 1).text(),
-                                               cost=int(self.product_table.item(row, 2).text())))
+            checked_products.append(tuple([
+                                        self.product_table.item(row, 0).text(),
+                                        self.product_table.item(row, 1).text() if self.product_table.item(row, 1) else '',
+                                        int(self.product_table.item(row, 2).text())]))
 
 
         return self.name_input.text(), checked_persons, checked_products
