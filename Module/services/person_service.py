@@ -50,7 +50,7 @@ class PersonService(CRUDService):
 
         self.repo.delete_by_id(person_id)
 
-    def update(self,person_id, **kwargs) -> None:
+    def update(self,person_id, **kwargs) -> bool:
         if not kwargs:
             raise ValueError("No arguments provided for update")
         if not isinstance(person_id, int) or person_id < 0:
@@ -69,4 +69,13 @@ class PersonService(CRUDService):
             except AttributeError:
                 raise ValueError(f"Invalid argument: {item}")
 
-        self.repo.update(person)
+        return self.repo.update(person)
+
+    def get_object(self, person_id: int) -> Person:
+        if not isinstance(person_id, int) or person_id < 0:
+            raise ValueError("ID must be a positive integer")
+
+        person: Person = self.repo.read_by_id(person_id)
+        if not person:
+            raise ValueError("Person not found")
+        return person

@@ -46,3 +46,12 @@ class ProductService(CRUDService):
             raise ValueError("Product not found")
 
         self.repo.update(product)
+
+    def get_object(self, product_id: int) -> Product:
+        if not isinstance(product_id, int) or product_id < 0:
+            raise ValueError("ID must be a positive integer")
+
+        product: Product = self.repo.read_by_id(product_id)
+        if not product:
+            raise ValueError("Product not found")
+        return product

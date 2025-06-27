@@ -157,8 +157,32 @@ def select_all_purchases(db_path):
     except sqlite3.Error as error:
         raise sqlite3.Error (error)
 
+
 def update_purchase(db_path, purchase):
-    raise Exception('Not implemented')
+    try:
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
+            for settlement in purchase.purchase_settlements:
+                cursor.execute('''
+                               UPDATE purchase_settlement
+                               SET is_paid = ?
+                               WHERE person_id = ?
+                                 AND purchase_id = ?
+                               ''', (
+                                   settlement.is_paid,
+                                   settlement.person.id,
+                                   purchase.id
+                               ))
+
+            if cursor.rowcount == 0:
+                raise sqlite3.Error(f"No Purchase found with ID {purchase.id}")
+
+            conn.commit()
+            return True
+
+    except sqlite3.Error as error:
+        raise sqlite3.Error(error)
+
 
 def delete_purchase_by_id(db_path, purchase_id):
     try:

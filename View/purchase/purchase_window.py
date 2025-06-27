@@ -2,10 +2,11 @@ from datetime import datetime
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, \
-    QListWidgetItem
+    QListWidgetItem, QTableWidget, QTableWidgetItem, QCheckBox, QAbstractItemView, QHeaderView
 
 from Module.services.person_service import PersonService
 from Module.services.purchase_service import PurchaseService
+from View.functions import create_checkbox
 from View.purchase.mpl_canvas import MplCanvas
 from View.purchase.new_purchase_dialog import NewPurchaseDialog
 
@@ -15,8 +16,14 @@ class PurchaseWindow(QWidget):
         self.person_service = person_service
         self.purchase_service = purchase_service
 
+        self.person_width = 100
+        self.to_pay_width = 60
+        self.payed_width = 60
+
 
         self.purchases = []
+        self.displayed_purchase = None
+        self.displayed_purchase_row = -1
 
         main_layout = QHBoxLayout()
 
@@ -35,7 +42,7 @@ class PurchaseWindow(QWidget):
         self.purchases_name = QLabel()
         self.purchase_display_layout.addWidget(self.purchases_name)
 
-        # Purchase chart and persons layout
+        # Purchase chart and person layout
         self.purchase_layout = QHBoxLayout()
 
         # Purchase chart
@@ -47,6 +54,7 @@ class PurchaseWindow(QWidget):
 
         # Persons layout
         self.persons_layout = QVBoxLayout()
+        self.person_table = QTableWidget()
         self.purchase_layout.addLayout(self.persons_layout)
 
 
@@ -105,7 +113,8 @@ class PurchaseWindow(QWidget):
         # Refresh purchases
         self.fill_list()
         purchase = self.purchase_list.item(index).data(Qt.ItemDataRole.UserRole)
-        print(purchase['purchase_settlements'])
+        self.displayed_purchase = purchase
+        self.displayed_purchase_row = index
 
         self.canvas.axes.cla()
         self.canvas.draw()
@@ -123,16 +132,36 @@ class PurchaseWindow(QWidget):
 
         self.canvas.draw()
 
-        # Clear previous persons
+
         self.clear_persons_layout()
+        # Add a new table
+        self.person_table = QTableWidget()
+        self.person_table.setColumnCount(4)
+        self.person_table.setHorizontalHeaderLabels(['id','Person', 'To pay', 'Payed?'])
+        self.person_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.person_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.person_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+
+        self.person_table.setColumnHidden(0, True)
+        self.person_table.setColumnWidth(1,self.person_width)
+        self.person_table.setColumnWidth(2,self.to_pay_width)
+        self.person_table.setColumnWidth(3,self.payed_width)
+        self.person_table.setFixedWidth(self.person_width + self.to_pay_width + self.payed_width + 18)
+
         # Add new persons
-        for settlement in purchase['purchase_settlements']:
+        for i, settlement in enumerate(purchase['purchase_settlements']):
             amount = settlement['amount']
             person = settlement['person']
-            person_label = QLabel(person.detail.name)
-            person_label.setText(f"{person.detail.name}: {amount}")
-            person_label.setAlignment(Qt.AlignmentFlag.AlignTop)
-            self.persons_layout.addWidget(person_label)
+            check_box = create_checkbox(settlement['is_paid'], self.on_checkbox_change)
+            self.person_table.insertRow(i)
+            self.person_table.setItem(i, 0, QTableWidgetItem(str(person.id)))
+            self.person_table.setItem(i, 1, QTableWidgetItem(person.detail.name))
+            self.person_table.setItem(i, 2, QTableWidgetItem(str(round(amount))))
+            self.person_table.item(i, 2).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.person_table.setCellWidget(i, 3, check_box)
+
+
+            self.persons_layout.addWidget(self.person_table)
 
         self.persons_layout.addStretch()
 
@@ -145,6 +174,21 @@ class PurchaseWindow(QWidget):
             widget = self.persons_layout.takeAt(i).widget()
             if widget is not None:
                 widget.deleteLater()
+
+
+    def on_checkbox_change(self, state):
+        checkbox = self.sender()
+        pos = checkbox.mapTo(self.person_table.viewport(), checkbox.rect().center())
+        row = self.person_table.indexAt(pos).row()
+        self.edit_settlement(row, state)
+
+    def edit_settlement(self, row, state):
+        person_id = int(self.person_table.item(row, 0).text())
+        self.purchase_service.update(self.displayed_purchase['db_id'],
+                                     type='payment',
+                                     person_id=person_id, state=bool(state))
+        self.display_purchase(self.displayed_purchase_row)
+
 
     def new_purchase(self):
         persons = self.person_service.read_all()

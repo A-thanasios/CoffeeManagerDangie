@@ -123,7 +123,7 @@ def delete_person_by_id(db_path: str, person_id: int) -> bool | sqlite3.Error:
         with sqlite3.connect(db_path) as conn:
             cursor = conn.cursor()
 
-            # Check if the person have any purchases
+            # Check if the person has any purchases
             cursor.execute('PRAGMA foreign_keys = ON;')
             cursor.execute('''
                            SELECT purchase_id

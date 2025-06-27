@@ -35,3 +35,5 @@ class SQLitePurchaseRepository(Repository):
         if not isinstance(purchase, Purchase):
             raise TypeError(f"Expected a Purchase instance, got {type(purchase).__name__}")
         return self.purchase_operations.update_purchase(self.db_path, purchase)
+
+

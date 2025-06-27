@@ -76,13 +76,58 @@ class PurchaseService(CRUDService):
 
         self.repo.delete_by_id(purchase_id)
 
-    def update(self, purchase: Purchase) -> bool:
-        if not isinstance(purchase, Purchase):
-            raise ValueError("arg must be a Purchase object")
-        if not self.repo.read_by_id(purchase.id):
+    def update(self, purchase_id: int, **kwargs):
+        if not isinstance(purchase_id, int):
+            raise TypeError(f"Expected an integer for purchase_id, got {type(purchase_id).__name__}")
+        if not self.repo.read_by_id(purchase_id):
             raise ValueError("Purchase not found")
+        if not 'type' in kwargs:
+            raise ValueError("Update must have named argument type")
 
-        self.repo.update(purchase)
+        # try to find what update is called
+        update_type = kwargs['type']
+        if not isinstance(update_type, str):
+            raise TypeError(f"Expected an string for type, got {type(update_type).__name__}")
+
+        # get an object for update
+        purchase: Purchase = self.get_object(purchase_id)
+
+
+
+        match update_type:
+            case 'payment':
+                # try to find person_id
+                if not 'person_id' in kwargs:
+                    raise ValueError("Update must have named argument person_id")
+                person_id = kwargs['person_id']
+                if not isinstance(person_id, int):
+                    raise TypeError(f"Expected an integer for person_id, got {type(person_id).__name__}")
+
+                # try to find a state value to update
+                if not 'state' in kwargs:
+                    raise ValueError("Update must have named argument state")
+                state = kwargs['state']
+                if not isinstance(state, bool):
+                    raise TypeError(f"Expected an integer for state, got {type(state).__name__}")
+
+                for settlement in purchase.purchase_settlements:
+                    if settlement.person.id == person_id:
+                        settlement.is_paid = state
+                        break
+
+                self.repo.update(purchase)
+            case _:
+                raise ValueError(f"{update_type} not supported")
+
+    def get_object(self, purchase_id: int) -> Purchase:
+        if not isinstance(purchase_id, int) or purchase_id < 0:
+            raise ValueError("ID must be a positive integer")
+
+        purchase: Purchase = self.repo.read_by_id(purchase_id)
+        if not purchase:
+            raise ValueError("Purchase not found")
+        return purchase
+
 
     def person_has_purchases(self, person_id: int) -> bool:
         return self.repo.read_by_other_id(person_id) != []
@@ -96,6 +141,7 @@ class PurchaseService(CRUDService):
             raise ValueError("Purchase not found")
 
         return purchase.persons
+
 
     @staticmethod
     def __purchase_serialization(purchase: Purchase) -> dict:
