@@ -1,10 +1,12 @@
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPalette, QColor
 from PyQt6.QtWidgets import QWidget, QCheckBox, QHBoxLayout
 
 
-def create_checkbox(value, method):
+def create_checkbox(value: bool, method) -> QWidget:
     container = QWidget()
     checkbox_buying = QCheckBox()
+
     layout = QHBoxLayout(container)
     checkbox_buying.setChecked(value)
     checkbox_buying.setFixedWidth(17)

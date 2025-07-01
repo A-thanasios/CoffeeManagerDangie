@@ -31,7 +31,7 @@ class ProductService(CRUDService):
 
         return lst
 
-    def remove(self, product_id) -> None:
+    def delete(self, product_id) -> None:
         if not isinstance(product_id, int) or product_id < 0:
             raise ValueError("ID must be a positive integer")
         if not self.repo.get_by_id(product_id):

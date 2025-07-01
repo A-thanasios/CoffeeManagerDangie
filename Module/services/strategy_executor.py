@@ -1,6 +1,6 @@
 from Module.Interfaces.strategy_service import StrategyService
 from Infrastructure.factories.strategy_factory import StrategyFactory
-from Module.Model.person import Person
+from Module.model.person import Person
 from Module.strategies.strategy_type import StrategyType
 
 

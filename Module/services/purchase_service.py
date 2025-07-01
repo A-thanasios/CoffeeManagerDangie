@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from Module.Model.person import Person
-from Module.Model.product import Product
-from Module.Model.purchase import Purchase
+from Module.model.person import Person
+from Module.model.product import Product
+from Module.model.purchase import Purchase
 
 from Module.Interfaces import CRUDService
 from Module.Interfaces import Repository
@@ -68,7 +68,7 @@ class PurchaseService(CRUDService):
 
         return lst
 
-    def remove(self, purchase_id: Purchase.id) -> None:
+    def delete(self, purchase_id: Purchase.id) -> None:
         if not isinstance(purchase_id, int) or purchase_id < 0:
             raise ValueError("ID must be a positive integer")
         if not self.repo.read_by_id(purchase_id):

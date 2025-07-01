@@ -4,6 +4,10 @@ class Repository(ABC):
     """
     Abstract base class for repositories.
     """
+    def __init__(self, db_path, repository=None):
+        self.db_path = db_path
+        self._operations = self._get_operations()
+        self.aux_repo = repository
 
     @abstractmethod
     def create(self, entity) -> int | Exception:
@@ -46,3 +50,15 @@ class Repository(ABC):
         Update an existing entity in the repositories.
         """
         pass
+
+    @abstractmethod
+    def _get_operations(self):
+        """
+        Returns the operation class for the repository.
+        """
+        pass
+
+    # TODO: _validate_type(self, value: Any, expected_type: Type, param_name: str) -> None:
+    '''if not isinstance(value, expected_type):
+        raise TypeError(f"Expected {expected_type.__name__} for {param_name}, got {type(value).__name__}")'''
+

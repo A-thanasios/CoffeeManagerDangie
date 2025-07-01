@@ -2,8 +2,8 @@ import sqlite3
 from datetime import datetime
 
 from Module import Purchase
-from Module.Model.data.purchase_detail import PurchaseDetail
-from Module.Model.data.purchase_settlement import PurchaseSettlement
+from Module.model.data.purchase_detail import PurchaseDetail
+from Module.model.data.purchase_settlement import PurchaseSettlement
 
 from Infrastructure.database.SQlite.operations.SQLite_product_operations import insert_product, \
     select_products_by_purchase_id

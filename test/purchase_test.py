@@ -6,8 +6,8 @@ from datetime import datetime
 
 from Infrastructure import DatabaseFactory, RepositoryFactory
 from Module import PersonService, ProductService, PurchaseService, StrategyExecutor
-from Module.Model.person import Person
-from Module.Model.purchase import Purchase
+from Module.model.person import Person
+from Module.model.purchase import Purchase
 
 
 class PurchaseTest(unittest.TestCase):
@@ -52,7 +52,7 @@ class PurchaseTest(unittest.TestCase):
                                                days_per_week=5,
                                                is_buying=True)
 
-        self.person_service.remove(person_id)
+        self.person_service.delete(person_id)
 
         self.assertRaises(
             ValueError,
@@ -138,7 +138,7 @@ class PurchaseTest(unittest.TestCase):
                             products=purchase_serial['products']
                             )
         self.assertEqual(purchase.detail.name, "Test Purchase")
-        self.purchase_service.remove(purchase_id)
+        self.purchase_service.delete(purchase_id)
         self.assertRaises(
             ValueError,
             self.purchase_service.read,

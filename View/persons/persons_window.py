@@ -140,7 +140,7 @@ class PersonsWindow(QWidget):
         try:
             for person in self.selected_person_row:
                 db_id = int(self.persons_table.item(person, 0).text())
-                self.person_service.remove(db_id)
+                self.person_service.delete(db_id)
 
             self.fill_list()
         except Exception as e:

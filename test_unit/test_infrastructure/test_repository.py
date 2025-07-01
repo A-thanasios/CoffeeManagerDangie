@@ -6,9 +6,9 @@ from datetime import datetime
 
 
 from Infrastructure.factories.database_factory import DatabaseFactory
-from Infrastructure.repositories.SQLite_person_repository import SQLitePersonRepository
-from Infrastructure.repositories.SQLite_product_repository import SQLiteProductRepository
-from Infrastructure.repositories.SQLite_purchase_repository import SQLitePurchaseRepository
+from Infrastructure.repositories.SQLite.SQLite_person_repository import SQLitePersonRepository
+from Infrastructure.repositories.SQLite.SQLite_product_repository import SQLiteProductRepository
+from Infrastructure.repositories.SQLite.SQLite_purchase_repository import SQLitePurchaseRepository
 from MVP_DEPRECATED.Module.Model.person import Person
 from MVP_DEPRECATED.Module.Model.product import Product
 from MVP_DEPRECATED.Module import Purchase

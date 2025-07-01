@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QMovie, QColor, QPalette
 from PyQt6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, \
     QListWidgetItem, QTableWidget, QTableWidgetItem, QCheckBox, QAbstractItemView, QHeaderView
 
@@ -19,6 +20,8 @@ class PurchaseWindow(QWidget):
         self.person_width = 100
         self.to_pay_width = 60
         self.payed_width = 60
+        self.paid_color = tuple([0, 100, 200])
+        self.unpaid_color = tuple([255, 0, 0])
 
 
         self.purchases = []
@@ -59,6 +62,12 @@ class PurchaseWindow(QWidget):
 
 
         self.purchase_display_layout.addLayout(self.purchase_layout)
+
+        # QR view
+        self.qr_label = QLabel()
+        self.purchase_layout.addWidget(self.qr_label)
+
+
 
         # Operations layout
         self.operations_layout = QHBoxLayout()
@@ -127,7 +136,7 @@ class PurchaseWindow(QWidget):
                              autopct='%1.1f%%',
                              startangle=90,
                              textprops={'color': 'white'},
-                             colors=['gray' if not x['is_paid'] else 'tab:blue'
+                             colors=['gray' if not x['is_paid'] else (0, self.paid_color[1]/255, self.paid_color[2]/255)
                                     for x in purchase['purchase_settlements']])
 
         self.canvas.draw()
@@ -139,8 +148,17 @@ class PurchaseWindow(QWidget):
         self.person_table.setColumnCount(4)
         self.person_table.setHorizontalHeaderLabels(['id','Person', 'To pay', 'Payed?'])
         self.person_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.person_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.person_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.person_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
         self.person_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+        self.person_table.setStyleSheet("""
+            QTableWidget::item:selected {
+                background-color: rgb(78, 49, 45);
+            }
+        """)
+
+        self.person_table.clicked.connect(self.handle_click)
 
         self.person_table.setColumnHidden(0, True)
         self.person_table.setColumnWidth(1,self.person_width)
@@ -159,6 +177,7 @@ class PurchaseWindow(QWidget):
             self.person_table.setItem(i, 2, QTableWidgetItem(str(round(amount))))
             self.person_table.item(i, 2).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.person_table.setCellWidget(i, 3, check_box)
+            self.set_row_background_color(i, QColor(*self.unpaid_color) if not settlement['is_paid'] else QColor(*self.paid_color))
 
 
             self.persons_layout.addWidget(self.person_table)
@@ -180,6 +199,7 @@ class PurchaseWindow(QWidget):
         checkbox = self.sender()
         pos = checkbox.mapTo(self.person_table.viewport(), checkbox.rect().center())
         row = self.person_table.indexAt(pos).row()
+
         self.edit_settlement(row, state)
 
     def edit_settlement(self, row, state):
@@ -189,6 +209,33 @@ class PurchaseWindow(QWidget):
                                      person_id=person_id, state=bool(state))
         self.display_purchase(self.displayed_purchase_row)
 
+    def handle_click(self, index):
+        self.person_table.clearSelection()
+        self.person_table.selectRow(index.row())
+        self.show_person_qr()
+
+    def set_row_background_color(self, row, color=None):
+        if not color:
+            return
+        for column in range(self.person_table.columnCount()):
+            item = self.person_table.item(row, column)
+            if item:
+                item.setBackground(color)
+
+    def show_person_qr(self):
+        rows = self.person_table.selectionModel().selectedIndexes()
+        if rows:
+            row = rows[0].row()
+            self.person_table.columnAt(0)
+            person_id = int(self.person_table.item(row, 0).text())
+            if person_id == 3:
+                movie = QMovie('Module/15-23-06-837_512.gif')
+                self.qr_label.setMovie(movie)
+                self.qr_label.movie().start()
+            if person_id == 4:
+                movie = QMovie('Module/qr.gif')
+                self.qr_label.setMovie(movie)
+                self.qr_label.movie().start()
 
     def new_purchase(self):
         persons = self.person_service.read_all()
@@ -211,7 +258,7 @@ class PurchaseWindow(QWidget):
         current_row = self.purchase_list.currentRow()
         if current_row != -1:
             # Remove the purchase from the list and the display
-            self.purchase_service.remove(self.purchase_list.item(current_row).data(Qt.ItemDataRole.UserRole)['db_id'])
+            self.purchase_service.delete(self.purchase_list.item(current_row).data(Qt.ItemDataRole.UserRole)['db_id'])
             self.fill_list()
             if current_row < len(self.purchases):
                 self.purchase_list.setCurrentRow(current_row)

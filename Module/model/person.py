@@ -1,4 +1,4 @@
-from Module.Model.data.person_detail import PersonDetail
+from Module.model.data.person_detail import PersonDetail
 
 
 class Person:

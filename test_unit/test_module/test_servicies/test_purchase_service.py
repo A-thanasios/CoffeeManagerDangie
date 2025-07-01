@@ -68,13 +68,13 @@ class TestPurchaseService(unittest.TestCase):
 
     def test_remove_purchase_success(self):
         self.repo.get_by_id.return_value = self.purchase
-        self.purchase_service.remove(self.purchase.id)
+        self.purchase_service.delete(self.purchase.id)
         self.repo.remove_by_id.assert_called_once_with(self.purchase.id)
 
     def test_remove_purchase_not_found(self):
         self.repo.get_by_id.return_value = None
         with self.assertRaises(ValueError) as context:
-            self.purchase_service.remove(999)
+            self.purchase_service.delete(999)
         self.assertEqual(str(context.exception), "Purchase not found")
 
     def test_update_purchase_success(self):

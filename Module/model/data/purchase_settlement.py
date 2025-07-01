@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field, fields
 
-from Module.Model.person import Person
+from Module.model.person import Person
 
 
 @dataclass

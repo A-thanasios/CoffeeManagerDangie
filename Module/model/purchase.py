@@ -1,7 +1,7 @@
-from Module.Model.product import Product
-from Module.Model.person import Person
-from Module.Model.data.purchase_detail import PurchaseDetail
-from Module.Model.data.purchase_settlement import PurchaseSettlement
+from Module.model.product import Product
+from Module.model.person import Person
+from Module.model.data.purchase_detail import PurchaseDetail
+from Module.model.data.purchase_settlement import PurchaseSettlement
 
 
 class Purchase:

@@ -81,7 +81,7 @@ class PurchaseProvider(Provider):
         return self.purchase_service.update(purchase)
 
     def delete(self, purchase_id: str | list[str]) -> bool:
-        self.purchase_service.remove(purchase_id)
+        self.purchase_service.delete(purchase_id)
 
 
     @staticmethod

@@ -1,4 +1,4 @@
-from Module.Model.person import Person
+from Module.model.person import Person
 from Module.Interfaces.crud_service import CRUDService
 from Module.Interfaces.repository import Repository
 
@@ -42,7 +42,7 @@ class PersonService(CRUDService):
 
 
 
-    def remove(self, person_id) -> None:
+    def delete(self, person_id) -> None:
         if not isinstance(person_id, int) or person_id < 0:
             raise ValueError("ID must be a positive integer")
         if not self.repo.read_by_id(person_id):

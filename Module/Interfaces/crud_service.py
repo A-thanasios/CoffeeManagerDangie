@@ -22,16 +22,18 @@ class CRUDService(ABC):
         Read all objects from the database and returns a list of dictionary where a key is attribute as string.
         """
         pass
-    @abstractmethod
-    def remove(self, obj_id: int) -> None:
-        """
-        Remove an object from the database by its ID.
-        """
-        pass
+
     @abstractmethod
     def update(self, obj) -> None:
         """
         Update an existing object in the database.
+        """
+        pass
+
+    @abstractmethod
+    def delete(self, obj_id: int) -> None:
+        """
+        Remove an object from the database by its ID.
         """
         pass
 

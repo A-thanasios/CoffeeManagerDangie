@@ -13,9 +13,9 @@ __all__ = \
         "StrategyType"
     ]
 
-from Module.Model.person import Person
-from Module.Model.product import Product
-from Module.Model.purchase import Purchase
+from Module.model.person import Person
+from Module.model.product import Product
+from Module.model.purchase import Purchase
 
 from Module.services.person_service import PersonService
 from Module.services.product_service import ProductService

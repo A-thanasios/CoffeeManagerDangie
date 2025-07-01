@@ -85,20 +85,20 @@ class TestPersonService(unittest.TestCase):
         self.repo.get_by_id.return_value = self.person
         self.purchase_service.person_has_purchases.return_value = False
 
-        self.person_service.remove(self.person.id)
+        self.person_service.delete(self.person.id)
         self.repo.remove_by_id.assert_called_once_with(self.person.id)
 
     def test_remove_person_not_found(self):
         self.repo.get_by_id.return_value = None
         with self.assertRaises(ValueError) as context:
-            self.person_service.remove(999)
+            self.person_service.delete(999)
         self.assertEqual(str(context.exception), "Person not found")
 
     def test_remove_person_has_purchases(self):
         self.repo.get_by_id.return_value = self.person
         self.purchase_service.person_has_purchases.return_value = True
         with self.assertRaises(ValueError) as context:
-            self.person_service.remove(self.person.id)
+            self.person_service.delete(self.person.id)
         self.assertEqual(str(context.exception), "Person has purchases, cannot delete")
 
     def test_update_person_success(self):

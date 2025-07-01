@@ -32,4 +32,4 @@ class PersonProvider(Provider):
         self.person_service.update(person_id, **updated_data)
 
     def delete(self, item_id: str) -> None:
-        self.person_service.remove(item_id)
+        self.person_service.delete(item_id)
