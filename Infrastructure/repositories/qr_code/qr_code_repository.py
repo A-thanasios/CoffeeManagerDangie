@@ -37,11 +37,19 @@ class QRCodeRepository(Repository):
         return purchase.id
 
     def read_by_id(self, purchase_id) -> str | None:
+        """
+        returns the path to the qr codes for the purchase with the given id
+        if no purchase is found, returns None.
+        """
         purchase: Purchase = self.aux_repo.read_by_id(purchase_id)
         if purchase:
             name = purchase.detail.name
             month = purchase.detail.date.month
-            return  os.path.join(self.db_path, QR_PAYMENT_DIR, str(month), str(name))
+            path = os.path.join(self.db_path, QR_PAYMENT_DIR, str(month), str(name))
+            if os.path.exists(path):
+                return path
+            else:
+                raise FileNotFoundError(f"No QR code found for purchase {purchase_id}")
         else:
             return None
 
