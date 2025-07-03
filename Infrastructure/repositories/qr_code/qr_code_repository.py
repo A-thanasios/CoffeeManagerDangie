@@ -1,9 +1,10 @@
 import os
+import shutil
 from datetime import datetime
 
 from bank import account_number, bank_number, prefix
 
-from Infrastructure.utilities.qr_paymnet_generator import spayd_payment_qr_code_generator
+from Infrastructure.utilities.qr_payment_generator import spayd_payment_qr_code_generator
 
 from Module.Interfaces import Repository
 from Module import Purchase
@@ -31,7 +32,7 @@ class QRCodeRepository(Repository):
         # loop the set, for every item create qr code
         # and save it to purchase dir with a number as name (days per week)
         for days_per_week, amount in days_per_week:
-            self._operations.generate_qr_code(f"{purchase_dir}/{days_per_week}.gif",
+            self._operations.generate_qr_payment(f"{purchase_dir}/qr_{days_per_week}.gif",
                                               amount,
                                               account_number, bank_number, prefix)
         return purchase.id
@@ -43,9 +44,10 @@ class QRCodeRepository(Repository):
         """
         purchase: Purchase = self.aux_repo.read_by_id(purchase_id)
         if purchase:
-            name = purchase.detail.name
+            db_id = purchase.id
             month = purchase.detail.date.month
-            path = os.path.join(self.db_path, QR_PAYMENT_DIR, str(month), str(name))
+            path = os.path.join(self.db_path, QR_PAYMENT_DIR, str(month), str(db_id))
+            print(path)
             if os.path.exists(path):
                 return path
             else:
@@ -84,7 +86,7 @@ class QRCodeRepository(Repository):
     def delete_by_id(self, purchase_id) -> bool | Exception:
         path = self.read_by_id(purchase_id)
         if path:
-            os.remove(path)
+            shutil.rmtree(path)
             return True
         else:
             return False

@@ -1,6 +1,7 @@
 import segno
 
 IBAN_PREFIX_LENGTH: int = 6
+IBAN_CONTROL_NUMBER_LENGTH: int = 2
 PAYMENT_COUNTRY: str = 'CZ'
 COUNTRY_CONTROL_NUMBER: str = '123500'
 
@@ -13,10 +14,9 @@ def generate_qr_payment(target: str,
                         amount: str,
                         account_number: str, bank_number: str, prefix: str | None = None) -> None:
     iban = generate_iban(prefix, account_number, bank_number)
-    print(iban)
     spayd_code = f"SPD*1.0*ACC:{iban}*AM:{amount}*CC:CZK"
     qr = segno.make_qr(spayd_code)
-    qr.to_artistic(background='15-23-06-837_512.gif',
+    qr.to_artistic(background='Infrastructure/utilities/qr_payment_generator/15-23-06-837_512.gif',
                    target=target,
                    scale=15,
                    dark=(75, 54, 33))
@@ -25,6 +25,7 @@ def generate_qr_payment(target: str,
 def generate_iban(prefix: str, account_number: str, bank_number: str) -> str:
     iban_prefix = generate_iban_prefix(prefix)
     control_number = 98 - (int(bank_number + iban_prefix + account_number + COUNTRY_CONTROL_NUMBER) % 97)
+    control_number = str(control_number).zfill(IBAN_CONTROL_NUMBER_LENGTH)
 
     return f"{PAYMENT_COUNTRY}{control_number}{bank_number}{iban_prefix}{account_number}"
 

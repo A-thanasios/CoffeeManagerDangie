@@ -1,3 +1,4 @@
+from Infrastructure.repositories.qr_code.qr_code_repository import QRCodeRepository
 from Module.Interfaces.database import Database
 from Infrastructure.repositories.SQLite.SQLite_person_repository import SQLitePersonRepository
 from Infrastructure.repositories.SQLite.SQLite_product_repository import SQLiteProductRepository
@@ -26,3 +27,6 @@ class RepositoryFactory:
             return SQLitePurchaseRepository(self.db.path)
         else:
             raise ValueError(f"Unsupported repository type: {self.db.type}")
+
+    def create_qr_code_repository(self, aux_repo=None) -> Repository:
+        return QRCodeRepository(self.db.path.rsplit('/', 1)[0], aux_repo)

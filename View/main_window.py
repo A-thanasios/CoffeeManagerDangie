@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QEvent
 
 from Configuration.settings import app_name
+from Module.services.payment_service import PaymentService
 from Module.services.person_service import PersonService
 from Module.services.purchase_service import PurchaseService
 from View.persons.persons_window import PersonsWindow
@@ -12,13 +13,14 @@ from View.title_bar import TitleBar
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, person_service: PersonService, purchase_service: PurchaseService):
+    def __init__(self, person_service: PersonService, purchase_service: PurchaseService, payment_service: PaymentService):
         super().__init__()
         self.person_service = person_service
         self.purchase_service = purchase_service
+        self.payment_service = payment_service
 
         self.title_bar = TitleBar(self)
-        self.purchase_window = PurchaseWindow(self.person_service, self.purchase_service)
+        self.purchase_window = PurchaseWindow(self.person_service, self.purchase_service, self.payment_service)
         self.persons_window = PersonsWindow(self.person_service)
 
         self.setWindowTitle(app_name)

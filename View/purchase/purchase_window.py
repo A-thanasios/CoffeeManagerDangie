@@ -5,6 +5,8 @@ from PyQt6.QtGui import QMovie, QColor, QPalette
 from PyQt6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, \
     QListWidgetItem, QTableWidget, QTableWidgetItem, QCheckBox, QAbstractItemView, QHeaderView
 
+
+from Module.services.payment_service import PaymentService
 from Module.services.person_service import PersonService
 from Module.services.purchase_service import PurchaseService
 from View.functions import create_checkbox
@@ -12,10 +14,11 @@ from View.purchase.mpl_canvas import MplCanvas
 from View.purchase.new_purchase_dialog import NewPurchaseDialog
 
 class PurchaseWindow(QWidget):
-    def __init__(self, person_service: PersonService, purchase_service: PurchaseService):
+    def __init__(self, person_service: PersonService, purchase_service: PurchaseService, payment_service: PaymentService ):
         super().__init__()
         self.person_service = person_service
         self.purchase_service = purchase_service
+        self.payment_service = payment_service
 
         self.person_width = 100
         self.to_pay_width = 60
@@ -228,12 +231,14 @@ class PurchaseWindow(QWidget):
             row = rows[0].row()
             self.person_table.columnAt(0)
             person_id = int(self.person_table.item(row, 0).text())
-            if person_id == 3:
-                movie = QMovie('Module/15-23-06-837_512.gif')
-                self.qr_label.setMovie(movie)
-                self.qr_label.movie().start()
-            if person_id == 4:
-                movie = QMovie('Module/qr.gif')
+            print(person_id)
+            if self.displayed_purchase:
+                qr_dir_path = self.payment_service.read(self.displayed_purchase['db_id'])
+                qr_code_name = [purchase['person'].detail.days_per_week
+                                for purchase in self.displayed_purchase['purchase_settlements'] if purchase['person'].id == person_id][0]
+                print(f'{qr_dir_path}/{qr_code_name}.gif')
+                print(qr_code_name)
+                movie = QMovie(f'{qr_dir_path}/qr_{qr_code_name}.gif')
                 self.qr_label.setMovie(movie)
                 self.qr_label.movie().start()
 
@@ -255,7 +260,8 @@ class PurchaseWindow(QWidget):
 
     def delete_purchase(self):
         # Get the current row
-        current_row = self.purchase_list.currentRow()
+        current_row = self.displayed_purchase_row
+        print(self.displayed_purchase_row)
         if current_row != -1:
             # Remove the purchase from the list and the display
             self.purchase_service.delete(self.purchase_list.item(current_row).data(Qt.ItemDataRole.UserRole)['db_id'])

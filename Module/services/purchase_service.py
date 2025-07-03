@@ -12,37 +12,40 @@ from Module.strategies.strategy_type import StrategyType
 
 class PurchaseService(CRUDService):
     def __init__(self, repo: Repository,
-                 product_service: CRUDService, person_service: CRUDService, strategy_service: StrategyExecutor) -> None:
+                 product_service: CRUDService, person_service: CRUDService, payment_service: CRUDService,
+                 strategy_service: StrategyExecutor) -> None:
         self.repo = repo
         self.product_service = product_service
         self.person_service = person_service
+        self.payment_service = payment_service
         self.strategy_service = strategy_service
 
-    def create(self,
-               person_ids: list[int],
+    def create(self, person_ids: list[int],
                products: list[tuple], strategy_type: str, **kwargs) -> int:
 
-            strategy = StrategyType[strategy_type]
-            product_list: list[Product] = [self.product_service.create(*product) for product in products]
-            persons = [Person(**self.person_service.read(person_id)) for person_id in person_ids]
+        strategy = StrategyType[strategy_type]
+        product_list: list[Product] = [self.product_service.create(*product) for product in products]
+        persons = [Person(**self.person_service.read(person_id)) for person_id in person_ids]
 
-            if not persons:
-                raise ValueError("No persons found")
+        if not persons:
+            raise ValueError("No persons found")
 
-            purchases = self.repo.read_all()
-            for p in purchases:
-                if p == (kwargs["name"]):
-                    raise ValueError("Purchase already exists")
+        purchases = self.repo.read_all()
+        for p in purchases:
+            if p == (kwargs["name"]):
+                raise ValueError("Purchase already exists")
 
-            person_costs = self.strategy_service.calculate_costs(strategy,
-                                                                 products= product_list,
-                                                                 persons=persons)
-            purchase = Purchase(**kwargs,
-                                purchase_settlements=person_costs,
-                                products=product_list,
-                                )
+        person_costs = self.strategy_service.calculate_costs(strategy,
+                                                             products= product_list,
+                                                             persons=persons)
+        purchase = Purchase(**kwargs,
+                            purchase_settlements=person_costs,
+                            products=product_list,
+                            )
+        purchase.id = self.repo.create(purchase)
+        self.payment_service.create(purchase)
 
-            return self.repo.create(purchase)
+        return purchase.id
 
     def read(self, purchase_id: int) -> dict[str: any]:
         if not isinstance(purchase_id, int) or purchase_id < 0:
@@ -73,7 +76,7 @@ class PurchaseService(CRUDService):
             raise ValueError("ID must be a positive integer")
         if not self.repo.read_by_id(purchase_id):
             raise ValueError("Purchase not found")
-
+        self.payment_service.delete(purchase_id)
         self.repo.delete_by_id(purchase_id)
 
     def update(self, purchase_id: int, **kwargs):

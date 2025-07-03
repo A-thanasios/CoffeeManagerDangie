@@ -21,7 +21,7 @@ class PersonsWindow(QWidget):
         self.is_loading = False
 
 
-        self.persons = []
+        self.persons = None
         self.selected_person_row = []
 
         # Main layout
@@ -120,7 +120,8 @@ class PersonsWindow(QWidget):
         index = 0
         while True:
             name = 'Give me name' + (f'{index}' if index > 0 else '')
-
+            if not self.persons:
+                break
             if not any(person['name'] == name for person in self.persons.values()):
                 break
             index += 1

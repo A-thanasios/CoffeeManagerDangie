@@ -1,26 +1,15 @@
 from Module.Interfaces import CRUDService, Repository
+from Module.model.purchase import Purchase
 
 
 class PaymentService(CRUDService):
     def __init__(self, repository: Repository):
         self.repo = repository
 
-    def create(self, **kwargs) -> int | object:
-        """
-        kwargs: amount: str, account_number: str, bank_code: str
-        """
-
-        required_args = ['amount', 'account_number', 'bank_code']
-        for arg in required_args:
-            if arg not in kwargs:
-                raise ValueError(f"Missing required argument: {arg}")
-            if not isinstance(arg, str):
-                try:
-                   kwargs[arg] =  str(arg)
-                except:
-                    raise TypeError(f"Invalid argument type: {arg}")
-
-        return self.repo.create(**kwargs)
+    def create(self, purchase: Purchase) -> int | object:
+        if not isinstance(purchase, Purchase):
+            raise TypeError("Invalid argument type: purchase")
+        return self.repo.create(purchase)
 
     def read(self, purchase_id: int) -> dict[str: any]:
         """
@@ -28,7 +17,7 @@ class PaymentService(CRUDService):
         """
         if not isinstance(purchase_id, int):
             raise TypeError("Invalid argument type: purchase_id")
-        return {str(purchase_id): self.repo.read_by_id(purchase_id)}
+        return self.repo.read_by_id(purchase_id)
 
     def read_all(self) -> list[dict[str, any]]:
         raise NotImplementedError("Use read(purchase_id) instead.")
