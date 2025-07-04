@@ -5,7 +5,7 @@ from PyQt6.QtGui import QMovie, QColor, QPalette
 from PyQt6.QtWidgets import QWidget, QListWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDialog, \
     QListWidgetItem, QTableWidget, QTableWidgetItem, QCheckBox, QAbstractItemView, QHeaderView
 
-
+from Module.services.mail_service import MailService
 from Module.services.payment_service import PaymentService
 from Module.services.person_service import PersonService
 from Module.services.purchase_service import PurchaseService
@@ -14,11 +14,12 @@ from View.purchase.mpl_canvas import MplCanvas
 from View.purchase.new_purchase_dialog import NewPurchaseDialog
 
 class PurchaseWindow(QWidget):
-    def __init__(self, person_service: PersonService, purchase_service: PurchaseService, payment_service: PaymentService ):
+    def __init__(self, person_service: PersonService, purchase_service: PurchaseService, payment_service: PaymentService, mail_service: MailService ):
         super().__init__()
         self.person_service = person_service
         self.purchase_service = purchase_service
         self.payment_service = payment_service
+        self.mail_service = mail_service
 
         self.person_width = 100
         self.to_pay_width = 60
@@ -87,6 +88,13 @@ class PurchaseWindow(QWidget):
         self.delete_purchase_button.setMaximumWidth(100)
         self.delete_purchase_button.clicked.connect(self.delete_purchase)
         self.operations_layout.addWidget(self.delete_purchase_button)
+
+        self.operations_layout.addStretch()
+        self.send_mail_button = QPushButton("Send Mails")
+        self.send_mail_button.setMaximumWidth(100)
+        self.send_mail_button.clicked.connect(self.send_mails)
+        self.operations_layout.addWidget(self.send_mail_button)
+
         self.operations_layout.addStretch()
         self.purchase_display_layout.addLayout(self.operations_layout)
 
@@ -271,3 +279,9 @@ class PurchaseWindow(QWidget):
             else:
                 self.purchase_list.setCurrentRow(len(self.purchases) - 1)
             self.display_purchase(current_row)
+
+    def send_mails(self):
+        purchase_id = self.displayed_purchase['db_id']
+        print(purchase_id)
+
+        self.mail_service.send_payment_mail(purchase_id)

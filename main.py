@@ -5,7 +5,9 @@ from PyQt6.QtWidgets import QApplication
 import Configuration.settings
 
 from Infrastructure import DatabaseFactory, RepositoryFactory
+from Infrastructure.utilities.mail_sending.auth2_gmail_send.gmail_send import send_email
 from Module import PersonService, PurchaseService
+from Module.services.mail_service import MailService
 from Module.services.payment_service import PaymentService
 from Module.services.product_service import ProductService
 from Module.services.strategy_executor import StrategyExecutor
@@ -18,7 +20,6 @@ os.environ['QT_QPA_PLATFORM'] = Configuration.settings.environ_platform
 
 
 def main():
-
     # Initialize the database
     db = DatabaseFactory.create_database()
 
@@ -39,13 +40,16 @@ def main():
                                        payment_service,
                                        strategy_service)
 
+    mail_service = MailService(purchase_service, payment_service)
+
 
     # Initialize the gui
     app = QApplication(sys.argv)
 
     window = MainWindow(person_service,
                         purchase_service,
-                        payment_service)
+                        payment_service,
+                        mail_service)
 
     window.show()
 
