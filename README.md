@@ -13,6 +13,8 @@ I now use it for:
 - Experimenting with **payment QR generation**  
 - Exploring fun, unconventional approaches to simple workflows  
 
+Infrastructure/database/payment_qrs/7/1/qr_1.gif
+
 ## License
 
 This project is licensed under the GNU General Public License v3.0 (GPLv3).
@@ -23,3 +25,4 @@ This project uses [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) und
 
 
 See the [LICENSE](./LICENSE) file for full details.
+
