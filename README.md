@@ -11,9 +11,11 @@ A project originally designed to manage a simple use case:
 I now use it for:  
 - Practicing **software architecture**  
 - Experimenting with **payment QR generation**  
-- Exploring fun, unconventional approaches to simple workflows  
+- Exploring fun, unconventional approaches to simple workflows
 
-Infrastructure/database/payment_qrs/7/1/qr_1.gif
+---
+
+![Infrastructure/database/payment_qrs/7/1/qr_1.gif](https://github.com/A-thanasios/CoffeeManagerDangie/blob/03e2d087543510ffd04929430d945ae0f7c5c00b/Infrastructure/database/payment_qrs/7/1/qr_1.gif)
 
 ## License
 
@@ -25,4 +27,5 @@ This project uses [PyQt6](https://www.riverbankcomputing.com/software/pyqt/) und
 
 
 See the [LICENSE](./LICENSE) file for full details.
+
 
